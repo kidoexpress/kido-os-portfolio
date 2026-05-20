@@ -2,13 +2,20 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   Mail, Briefcase, Folder,
-  Terminal as TerminalIcon, Trash2, Monitor, User,
+  Terminal as TerminalIcon, Trash2, Monitor, User, Download,
+  FlaskConical, ShieldAlert, Trophy, AlertTriangle, Moon, Star, Cloud,
 } from 'lucide-react';
 import { Window } from './Window';
 import { Taskbar, type WinAppId } from './Taskbar';
 import { StartMenu } from './StartMenu';
 import { Terminal } from './apps/Terminal';
 import { FileExplorer } from './apps/FileExplorer';
+import { SpotifyMiniApp } from './apps/SpotifyMiniApp';
+import { RecycleBinApp } from './apps/RecycleBinApp';
+import { WorldCupSimulator } from './apps/WorldCupSimulator';
+import { ResearchLabApp } from './apps/ResearchLabApp';
+import { FakeSystemApp } from './apps/FakeSystemApp';
+import { ChaosApp } from './apps/ChaosApp';
 
 /* ── Viewport-aware terminal dimensions ───────────────── */
 const TERM_W = Math.min(720, window.innerWidth  - 96);
@@ -30,13 +37,31 @@ function CmdIcon() {
   );
 }
 
+function PixelIcon({ label, bg, fg }: { label: string; bg: string; fg: string }) {
+  return (
+    <div
+      className="pixel-icon"
+      style={{
+        background: bg,
+        color: fg,
+        boxShadow: `0 8px 18px ${bg}55, inset -4px -4px 0 rgba(0,0,0,0.18), inset 4px 4px 0 rgba(255,255,255,0.18)`,
+      }}
+    >
+      {label}
+    </div>
+  );
+}
+
 /* ── App registry ─────────────────────────────────────── */
 
 type AppConfig = {
   id: WinAppId;
   title: string;
   icon: React.ReactNode;
-  component: React.ComponentType<{ onOpenApp?: (app: string) => void }>;
+  component: React.ComponentType<{
+    onOpenApp?: (app: string) => void;
+    onChaos?: () => void;
+  }>;
   width: number;
   height: number;
 };
@@ -48,6 +73,13 @@ const APPS: AppConfig[] = [
   { id: 'research',   title: 'Research',        icon: <Folder size={13} />,       component: () => <FileExplorer initialSection="research" />,   width: 720, height: 480 },
   { id: 'experience', title: 'Experience',      icon: <Briefcase size={13} />,    component: () => <FileExplorer initialSection="experience" />, width: 720, height: 520 },
   { id: 'contact',    title: 'Contact',         icon: <Mail size={13} />,         component: () => <FileExplorer initialSection="contact" />,    width: 560, height: 440 },
+  { id: 'spotify',    title: 'Spotify.exe',     icon: <img className="spotify-titlebar-logo" src="/spotify-icon.png" alt="" />, component: SpotifyMiniApp, width: 520, height: 576 },
+  { id: 'downloads',  title: 'Downloads',       icon: <Download size={13} />,     component: () => <FakeSystemApp title="Downloads" subtitle="Recently downloaded lore" lines={['resume_actual_latest.pdf', 'berkeley_deadline_survival_kit.zip', 'tiny_product_ideas.txt', 'worldcup_model_notes.csv']} />, width: 520, height: 380 },
+  { id: 'recycle',    title: 'Recycle Bin',     icon: <Trash2 size={13} />,       component: RecycleBinApp,                                       width: 560, height: 400 },
+  { id: 'researchLab', title: 'Research Lab',   icon: <FlaskConical size={13} />, component: ResearchLabApp,                                      width: 660, height: 500 },
+  { id: 'conspiracy', title: 'Conspiracy.exe',  icon: <ShieldAlert size={13} />,  component: () => <FakeSystemApp title="Conspiracy.exe" subtitle="Totally normal project board" lines={['Why do all TODOs reproduce after midnight?', 'Is the perfect README hiding in plain sight?', 'Evidence suggests football analytics can predict vibes.', 'Conclusion: more coffee required.']} />, width: 520, height: 420 },
+  { id: 'worldCupSim', title: 'WorldCupSim.exe', icon: <Trophy size={13} />,       component: WorldCupSimulator,                                   width: 560, height: 480 },
+  { id: 'chaos',      title: 'DO_NOT_OPEN.exe', icon: <AlertTriangle size={13} />, component: ChaosApp,                                            width: 420, height: 320 },
 ];
 
 /* ── Desktop icon ─────────────────────────────────────── */
@@ -103,6 +135,7 @@ export function Desktop() {
   const [startOpen, setStartOpen]   = useState(false);
   const [selected, setSelected]     = useState<string | null>(null);
   const [notification, setNotification] = useState<{ msg: string; id: number } | null>(null);
+  const [chaosActive, setChaosActive] = useState(false);
   const constraintsRef  = useRef<HTMLDivElement>(null);
   const notifId         = useRef(0);
   const windowPosMap    = useRef<Map<WinAppId, { x: number; y: number }>>(new Map());
@@ -165,6 +198,12 @@ export function Desktop() {
     setTimeout(() => setNotification((n) => n?.id === id ? null : n), 4500);
   }, []);
 
+  const triggerChaos = useCallback(() => {
+    setChaosActive(true);
+    showNotif('Relax. Just testing your reflexes.');
+    setTimeout(() => setChaosActive(false), 1800);
+  }, [showNotif]);
+
   useEffect(() => {
     const t1 = setTimeout(() => openApp('terminal'), 500);
     const t2 = setTimeout(() => showNotif('Welcome to KidoOS — double-click icons to open apps.'), 1300);
@@ -195,6 +234,11 @@ export function Desktop() {
       iconEl: <CmdIcon />,
     },
     {
+      id: 'spotify', label: 'Spotify.exe', initialX: 108, initialY: 14,
+      action: () => openApp('spotify'),
+      iconEl: <img className="spotify-desktop-logo" src="/spotify-icon.png" alt="" />,
+    },
+    {
       id: 'contact', label: 'Contact', initialX: 14, initialY: 414,
       action: () => openApp('contact'),
       iconEl: <Mail size={42} style={{ color: '#64b5f6', filter: shadow('rgba(0,80,200,0.4)') }} />,
@@ -208,11 +252,32 @@ export function Desktop() {
 
   return (
     <div
-      className="win-desktop"
+      className={`win-desktop${chaosActive ? ' chaos-active' : ''}`}
       ref={constraintsRef}
       onClick={() => { setSelected(null); if (startOpen) setStartOpen(false); }}
     >
       <div className="win-wallpaper" />
+      <button
+        className="wallpaper-hotspot moon"
+        title="moon"
+        onClick={(e) => { e.stopPropagation(); showNotif('Moon says: ship small, iterate honestly.'); }}
+      >
+        <Moon size={16} />
+      </button>
+      <button
+        className="wallpaper-hotspot star"
+        title="star"
+        onClick={(e) => { e.stopPropagation(); showNotif('Tiny star opened a suspicious playlist.'); openApp('spotify'); }}
+      >
+        <Star size={13} />
+      </button>
+      <button
+        className="wallpaper-hotspot cloud"
+        title="cloud"
+        onClick={(e) => { e.stopPropagation(); showNotif('Cloud backup failed: too many unfinished side projects.'); }}
+      >
+        <Cloud size={18} />
+      </button>
 
       {DESKTOP_ICONS.map((icon) => (
         <DraggableIcon
@@ -248,7 +313,10 @@ export function Desktop() {
             onFocus={() => focusApp(cfg.id)}
             constraintsRef={constraintsRef}
           >
-            <AppComp onOpenApp={(id) => openApp(id as WinAppId)} />
+            <AppComp
+              onOpenApp={(id) => openApp(id as WinAppId)}
+              onChaos={triggerChaos}
+            />
           </Window>
         );
       })}

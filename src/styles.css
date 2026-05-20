@@ -359,6 +359,55 @@ a { color: inherit; text-decoration: none; }
   background: rgba(0,0,0,0.12);
 }
 
+.win-desktop.chaos-active .win-wallpaper {
+  animation: wallpaper-glitch 0.18s steps(2) 8;
+  filter: hue-rotate(18deg) contrast(1.12);
+}
+
+.win-desktop.chaos-active::after {
+  content: 'ERR_FAKE_PANIC';
+  position: absolute;
+  inset: 0;
+  z-index: 580;
+  pointer-events: none;
+  display: grid;
+  place-items: center;
+  background:
+    repeating-linear-gradient(0deg, rgba(255,255,255,0.04), rgba(255,255,255,0.04) 1px, transparent 1px, transparent 5px),
+    rgba(0,0,0,0.18);
+  color: rgba(255,255,255,0.18);
+  font: 700 64px/1 "Cascadia Code", monospace;
+  letter-spacing: 0.12em;
+}
+
+@keyframes wallpaper-glitch {
+  0% { transform: translate(0, 0) scale(1.01); }
+  35% { transform: translate(-4px, 2px) scale(1.012); }
+  70% { transform: translate(5px, -2px) scale(1.012); }
+  100% { transform: translate(0, 0) scale(1.01); }
+}
+
+.wallpaper-hotspot {
+  position: absolute;
+  z-index: 5;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: rgba(255,255,255,0.18);
+  cursor: default;
+  filter: drop-shadow(0 1px 8px rgba(255,255,255,0.12));
+  transition: color 180ms ease, transform 180ms ease, opacity 180ms ease;
+  opacity: 0.42;
+}
+.wallpaper-hotspot:hover {
+  color: rgba(255,255,255,0.65);
+  transform: scale(1.12);
+  opacity: 1;
+}
+.wallpaper-hotspot.moon { top: 13%; right: 18%; }
+.wallpaper-hotspot.star { top: 22%; left: 49%; }
+.wallpaper-hotspot.cloud { bottom: 26%; right: 27%; }
+
 /* ═══════════════════════════════════════════════════════════
    DESKTOP ICONS  (absolutely positioned, individually draggable)
 ═══════════════════════════════════════════════════════════ */
@@ -406,6 +455,20 @@ a { color: inherit; text-decoration: none; }
   -webkit-box-orient: vertical;
 }
 
+.pixel-icon {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border: 2px solid rgba(255,255,255,0.55);
+  border-radius: 3px;
+  font-family: "Cascadia Code", "JetBrains Mono", monospace;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  image-rendering: pixelated;
+}
+
 /* ═══════════════════════════════════════════════════════════
    TASKBAR
 ═══════════════════════════════════════════════════════════ */
@@ -433,6 +496,8 @@ a { color: inherit; text-decoration: none; }
   display: flex;
   align-items: center;
   gap: 4px;
+  max-width: calc(100vw - 250px);
+  overflow: hidden;
 }
 
 .taskbar-tray {
@@ -1084,6 +1149,379 @@ a { color: inherit; text-decoration: none; }
   flex-shrink: 0;
   margin-top: 1px;
 }
+
+/* ═══════════════════════════════════════════════════════════
+   PERSONALITY APPS
+═══════════════════════════════════════════════════════════ */
+
+.spotify-app,
+.fake-app,
+.sim-app,
+.lab-app,
+.chaos-app {
+  height: 100%;
+  color: rgba(255,255,255,0.86);
+}
+
+.spotify-app {
+  position: relative;
+  padding: 18px;
+  background: rgba(18,18,20,0.88);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+}
+.spotify-shell {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.spotify-shell::after {
+  content: '';
+  pointer-events: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 72px;
+  background: linear-gradient(to bottom, transparent, rgba(18,18,20,0.82));
+}
+.spotify-header {
+  padding: 2px 2px 16px;
+}
+.spotify-heading-row {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin-bottom: 12px;
+}
+.spotify-header-icon {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.045);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.spotify-header-icon img {
+  width: 28px;
+  height: 28px;
+  display: block;
+  object-fit: contain;
+}
+.spotify-eyebrow {
+  width: fit-content;
+  margin-bottom: 3px;
+  padding: 3px 7px;
+  border: 1px solid rgba(29,185,84,0.22);
+  border-radius: 999px;
+  background: rgba(29,185,84,0.08);
+  color: rgba(30,215,96,0.82);
+  font: 600 9px "JetBrains Mono", "Cascadia Code", monospace;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.spotify-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 650;
+  letter-spacing: 0;
+  color: rgba(255,255,255,0.94);
+}
+.spotify-header p {
+  max-width: 430px;
+  margin: 0 0 10px;
+  color: rgba(255,255,255,0.54);
+  font-size: 12.5px;
+  line-height: 1.65;
+}
+.spotify-subtitle {
+  display: inline-flex;
+  color: rgba(255,255,255,0.36);
+  font-size: 11.5px;
+  letter-spacing: 0.01em;
+}
+.spotify-embed {
+  overflow: hidden;
+  flex-shrink: 0;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(0,0,0,0.26);
+  box-shadow: 0 16px 42px rgba(0,0,0,0.28);
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+.spotify-embed:hover {
+  border-color: rgba(255,255,255,0.14);
+  box-shadow: 0 18px 46px rgba(0,0,0,0.34);
+}
+.spotify-embed iframe { display: block; border: 0; }
+.spotify-footer {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding-top: 13px;
+  color: rgba(255,255,255,0.38);
+  font-size: 11.5px;
+}
+.spotify-footer a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  color: rgba(30,215,96,0.78);
+  transition: color 160ms ease;
+}
+.spotify-footer a:hover {
+  color: rgba(30,215,96,0.98);
+}
+
+.spotify-desktop-logo {
+  width: 52px;
+  height: 52px;
+  display: block;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 18px rgba(0,0,0,0.4)) drop-shadow(0 2px 10px rgba(29,185,84,0.34));
+}
+
+.spotify-taskbar-logo {
+  width: 30px;
+  height: 30px;
+  display: block;
+  object-fit: contain;
+}
+
+.spotify-titlebar-logo {
+  width: 14px;
+  height: 14px;
+  display: block;
+  object-fit: contain;
+}
+
+.win-window[data-app-id="spotify"] {
+  border-radius: 16px;
+  background: rgba(18,18,20,0.88);
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 0 24px 80px rgba(0,0,0,0.45);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+}
+.win-window[data-app-id="spotify"] .win-titlebar {
+  border-radius: 16px 16px 0 0;
+  background: rgba(20,20,22,0.62);
+}
+.win-window[data-app-id="spotify"] .win-body {
+  border-radius: 0 0 16px 16px;
+}
+
+.fake-app-header h2,
+.chaos-app h2 {
+  margin: 0 0 4px;
+  font-size: 20px;
+  font-weight: 650;
+}
+.fake-app-header p,
+.chaos-app p {
+  margin: 0 0 16px;
+  color: rgba(255,255,255,0.42);
+  font-size: 12.5px;
+}
+.fake-lines,
+.recycle-list {
+  display: grid;
+  gap: 8px;
+}
+.fake-lines div,
+.recycle-list button,
+.fake-status {
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 8px;
+  background: rgba(255,255,255,0.04);
+  padding: 11px 12px;
+  color: rgba(255,255,255,0.72);
+  font-size: 13px;
+}
+.recycle-list button {
+  display: grid;
+  grid-template-columns: 22px 1fr 20px;
+  align-items: center;
+  gap: 9px;
+  text-align: left;
+}
+.fake-status {
+  margin-top: 14px;
+  color: rgba(125,211,252,0.82);
+}
+
+.sim-app {
+  font-family: "Cascadia Code", "JetBrains Mono", monospace;
+  background: radial-gradient(circle at 20% 0%, rgba(34,197,94,0.12), transparent 35%);
+}
+.sim-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 18px;
+  color: rgba(255,255,255,0.45);
+  font-size: 12px;
+}
+.sim-header strong { color: #86efac; font-weight: 500; }
+.sim-selectors {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.sim-selectors label {
+  display: grid;
+  gap: 6px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.42);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+.sim-selectors select {
+  background: rgba(0,0,0,0.28);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 7px;
+  color: white;
+  padding: 9px;
+}
+.sim-run,
+.chaos-app button {
+  margin-top: 16px;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+  background: rgba(0,120,212,0.22);
+  color: white;
+  padding: 10px 12px;
+}
+.sim-loader {
+  margin: 18px 0;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.08);
+  overflow: hidden;
+}
+.sim-loader span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #86efac, #38bdf8);
+}
+.sim-result {
+  display: grid;
+  gap: 8px;
+  margin-top: 18px;
+}
+.sim-result div {
+  display: flex;
+  justify-content: space-between;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 8px;
+  padding: 10px;
+  background: rgba(255,255,255,0.04);
+}
+.sim-result p {
+  color: #86efac;
+  font-size: 12px;
+}
+
+.lab-app {
+  font-family: "Cascadia Code", "JetBrains Mono", monospace;
+  background: radial-gradient(circle at 80% 15%, rgba(45,212,191,0.12), transparent 40%);
+}
+.lab-terminal-title {
+  color: #5eead4;
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+.lab-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.lab-tabs button {
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 999px;
+  background: rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.56);
+  padding: 7px 10px;
+  font-size: 11px;
+}
+.lab-tabs button.active {
+  color: #99f6e4;
+  background: rgba(45,212,191,0.12);
+  border-color: rgba(45,212,191,0.28);
+}
+.lab-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 12px;
+}
+.lab-card,
+.lab-console {
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 9px;
+  background: rgba(0,0,0,0.22);
+  padding: 14px;
+}
+.lab-card span {
+  color: rgba(255,255,255,0.34);
+  font-size: 11px;
+}
+.lab-card h3 {
+  margin: 8px 0;
+  font-size: 18px;
+}
+.lab-card p,
+.lab-console p {
+  color: rgba(255,255,255,0.58);
+  line-height: 1.65;
+  font-size: 12.5px;
+}
+.lab-console .ok { color: #5eead4; }
+.lab-diagram {
+  position: relative;
+  min-height: 180px;
+  border: 1px solid rgba(94,234,212,0.18);
+  border-radius: 9px;
+  background:
+    linear-gradient(rgba(94,234,212,0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(94,234,212,0.07) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+.lab-diagram i {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(94,234,212,0.2);
+  border: 1px solid rgba(94,234,212,0.4);
+}
+.lab-diagram i:nth-child(1) { top: 28px; left: 24px; }
+.lab-diagram i:nth-child(2) { top: 74px; right: 34px; }
+.lab-diagram i:nth-child(3) { bottom: 28px; left: 54px; }
+.lab-diagram span {
+  position: absolute;
+  inset: 50% 18%;
+  height: 1px;
+  background: rgba(94,234,212,0.38);
+  transform: rotate(-18deg);
+}
+.chaos-app {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  text-align: center;
+  gap: 10px;
+}
+.chaos-app svg { color: #f87171; }
+.chaos-app button { background: rgba(239,68,68,0.22); }
 
 /* ═══════════════════════════════════════════════════════════
    SHARED APP UTILITIES

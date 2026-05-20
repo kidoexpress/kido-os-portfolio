@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { User, Terminal, Folder, BookOpen, Briefcase, Mail, Wifi, Volume2, Battery } from 'lucide-react';
 
 export type WinAppId =
-  | 'about' | 'terminal' | 'projects' | 'research' | 'experience' | 'contact';
+  | 'about' | 'terminal' | 'projects' | 'research' | 'experience' | 'contact'
+  | 'spotify' | 'downloads' | 'recycle' | 'researchLab' | 'conspiracy' | 'worldCupSim' | 'chaos';
 
 type TaskbarApp = { id: WinAppId; label: string; icon: React.ReactNode };
 
@@ -13,6 +14,7 @@ const APPS: TaskbarApp[] = [
   { id: 'research',   label: 'Research',       icon: <BookOpen size={18} /> },
   { id: 'experience', label: 'Experience',     icon: <Briefcase size={18} /> },
   { id: 'contact',    label: 'Contact',        icon: <Mail size={18} /> },
+  { id: 'spotify',    label: 'Spotify.exe',    icon: <img className="spotify-taskbar-logo" src="/spotify-icon.png" alt="" /> },
 ];
 
 type Props = {

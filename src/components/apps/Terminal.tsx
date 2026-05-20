@@ -127,7 +127,7 @@ const BOOT_BANNER: Line[] = [
 
 type Props = { onOpenApp?: (app: string) => void };
 
-export function Terminal({ onOpenApp: _onOpenApp }: Props) {
+export function Terminal({ onOpenApp }: Props) {
   const [history, setHistory] = useState<Line[]>(BOOT_BANNER);
   const [input, setInput]     = useState('');
   const [cmdHist, setCmdHist] = useState<string[]>([]);
@@ -142,17 +142,60 @@ export function Terminal({ onOpenApp: _onOpenApp }: Props) {
   const run = (cmd: string) => {
     const trimmed = cmd.trim();
     const [verb]  = trimmed.split(/\s+/);
+    const lower = trimmed.toLowerCase();
     const next: Line[] = [L('prompt', `${PROMPT_STR} ${trimmed}`)];
 
     if (!trimmed) { setHistory((h) => [...h, ...next]); return; }
     setCmdHist((h) => [trimmed, ...h]);
     setCmdIdx(-1);
 
-    if (verb === 'clear') { setHistory([]); return; }
+    if (lower === 'clear') { setHistory([]); return; }
 
-    switch (verb?.toLowerCase()) {
-      case 'help':           next.push(...HELP); break;
+    switch (lower) {
+      case 'sudo hire joao':
+        next.push(L('success', '  Permission granted.'));
+        next.push(L('success', '  Welcome aboard.'));
+        break;
+      case 'spotify':
+        next.push(L('success', '  Opening Spotify.exe...'));
+        onOpenApp?.('spotify');
+        break;
+      case 'mood':
+        next.push(L('output', '  Current mood:'));
+        next.push(L('success', '  [███████░░░] debugging CSS at 2am'));
+        break;
+      case 'origin_story':
+        next.push(L('output', '  A builder from Brazil exploring AI, economics,'));
+        next.push(L('output', '  product systems, education, and strange internet ideas.'));
+        break;
+      case 'coffee':
+        next.push(L('output', '  Brewing virtual espresso...'));
+        next.push(L('success', '  caffeine_level += 17'));
+        next.push(L('dim', '  warning: jitters may affect pointer precision'));
+        break;
+      case 'matrix':
+        next.push(L('success', '  Wake up, João...'));
+        next.push(L('dim', '  01001010 01001111 01000001 01001111'));
+        next.push(L('dim', '  portfolio.shell.inject(lore=true)'));
+        break;
+      case 'berkeley':
+        next.push(L('output', '  Current status:'));
+        next.push(L('blank', ''));
+        next.push(L('output', '  * CS student surviving project deadlines'));
+        next.push(L('output', '  * caffeine dependency: high'));
+        next.push(L('output', '  * sleep schedule: corrupted'));
+        break;
+      case 'easteregg':
+        next.push(L('success', '  You found a quiet corner of the OS.'));
+        next.push(L('dim', '  Try the wallpaper. Some pixels are suspicious.'));
+        break;
       case 'whoami':
+        next.push(L('output', '  joao@kido-os'));
+        next.push(L('dim', '  CS student · builder · research/product systems enjoyer'));
+        break;
+      default:
+        switch (verb?.toLowerCase()) {
+      case 'help':           next.push(...HELP); break;
       case 'about':          next.push(...ABOUT); break;
       case 'projects':       next.push(...getProjects()); break;
       case 'experience':     next.push(...getExperience()); break;
@@ -181,6 +224,7 @@ export function Terminal({ onOpenApp: _onOpenApp }: Props) {
       default:
         next.push(L('error', `  '${verb}' is not recognized as an internal or external command.`));
         next.push(L('dim',   '  Type "help" to see available commands.'));
+        }
     }
 
     next.push(L('blank', ''));
@@ -199,7 +243,7 @@ export function Terminal({ onOpenApp: _onOpenApp }: Props) {
       setCmdIdx(idx); setInput(idx === -1 ? '' : (cmdHist[idx] ?? ''));
     } else if (e.key === 'Tab') {
       e.preventDefault();
-      const cmds = ['help','about','projects','experience','research','skills','contact','neofetch','ls','dir','clear','date','ver'];
+      const cmds = ['help','about','projects','experience','research','skills','contact','neofetch','ls','dir','clear','date','ver','sudo hire joao','spotify','mood','origin_story','coffee','matrix','berkeley','whoami','easteregg'];
       const match = cmds.find((c) => c.startsWith(input) && c !== input);
       if (match) setInput(match);
     }
@@ -247,7 +291,7 @@ export function Terminal({ onOpenApp: _onOpenApp }: Props) {
               lineHeight: 'inherit',
               letterSpacing: 'inherit',
               width: `${input.length}ch`,
-              minWidth: 0,
+              minWidth: '1ch',
               display: 'inline',
             }}
             autoFocus

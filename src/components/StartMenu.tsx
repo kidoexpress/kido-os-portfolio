@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
-  Search, FlaskConical, BookOpen, StickyNote, Mail, Briefcase,
+  Search, FlaskConical, BookOpen, Mail, Briefcase,
   Terminal, FolderOpen, Globe, BarChart2, Brain, Leaf,
 } from 'lucide-react';
 import type { WinAppId } from './Taskbar';
@@ -13,9 +13,9 @@ const PINNED: PinnedApp[] = [
   { id: 'projects',   label: 'Projects',   icon: <FlaskConical size={20} />, bg: '#0078d4' },
   { id: 'research',   label: 'Research',   icon: <BookOpen size={20} />,     bg: '#5c2d91' },
   { id: 'experience', label: 'Experience', icon: <Briefcase size={20} />,    bg: '#107c10' },
-  { id: 'notes',      label: 'Notes',      icon: <StickyNote size={20} />,   bg: '#d83b01' },
   { id: 'contact',    label: 'Contact',    icon: <Mail size={20} />,          bg: '#0099bc' },
   { id: 'terminal',   label: 'Terminal',   icon: <Terminal size={20} />,      bg: '#1a1a1a' },
+  { id: 'spotify',    label: 'Spotify.exe', icon: <Globe size={20} />,        bg: '#1db954' },
 ];
 
 const RECOMMENDED: RecItem[] = [

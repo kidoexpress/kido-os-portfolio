@@ -62,14 +62,9 @@ export function MenuBar({ onOpenApp, onSearch, activeApp = 'KidoOS' }: Props) {
       <div className="menubar-tray">
         <Wifi size={13} strokeWidth={1.7} className="menubar-tray-icon" />
         <Battery size={14} strokeWidth={1.7} className="menubar-tray-icon" />
-        <Search
-          size={12}
-          strokeWidth={1.7}
-          className="menubar-tray-icon"
-          onClick={() => onSearch?.()}
-          style={{ cursor: 'pointer' }}
-          title="⌘K"
-        />
+        <button className="menubar-tray-button" onClick={() => onSearch?.()} title="⌘K">
+          <Search size={12} strokeWidth={1.7} className="menubar-tray-icon" />
+        </button>
         <div className="menubar-tray-divider" />
         <span className="menubar-clock">{date}&nbsp;&nbsp;{time}</span>
       </div>

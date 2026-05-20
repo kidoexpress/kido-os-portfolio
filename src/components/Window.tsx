@@ -22,6 +22,7 @@ type Props = {
 };
 
 export function Window({
+  id,
   title,
   icon,
   children,
@@ -75,6 +76,7 @@ export function Window({
           transition={{ duration: 0.22, ease: [0.34, 1.1, 0.64, 1] }}
           onPointerDown={onFocus}
           className={`win-window${maximized ? ' maximized' : ''}${focused ? ' focused' : ' inactive'}`}
+          data-app-id={id}
           style={
             maximized
               ? { position: 'absolute', inset: 0, width: '100%', height: '100%', zIndex, borderRadius: 0 }

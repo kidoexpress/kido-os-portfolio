@@ -14,14 +14,14 @@ const KIDO_ASCII = `
 type CheckLine = { label: string; delay: number };
 
 const CHECKS: CheckLine[] = [
-  { label: 'Loading project archive', delay: 500 },
-  { label: 'Indexing research systems', delay: 950 },
-  { label: 'Mounting portfolio workspace', delay: 1400 },
-  { label: 'Starting desktop environment', delay: 1850 },
+  { label: 'Initializing JoãoOS', delay: 180 },
+  { label: 'Loading caffeine', delay: 420 },
+  { label: 'Loading unfinished side projects', delay: 660 },
+  { label: 'Loading football analytics', delay: 900 },
 ];
 
-const PROGRESS_START = 2200;
-const COMPLETE_DELAY = 3500;
+const PROGRESS_START = 1040;
+const COMPLETE_DELAY = 1500;
 
 export function BootScreen({ onComplete }: { onComplete: () => void }) {
   const [showAscii, setShowAscii] = useState(false);
@@ -127,7 +127,7 @@ export function BootScreen({ onComplete }: { onComplete: () => void }) {
               className="w-64"
             >
               <div className="mb-1.5 flex justify-between text-[0.55rem] text-white/25">
-                <span>Booting workspace</span>
+                <span>System ready</span>
                 <span>{progress}%</span>
               </div>
               <div className="h-[1px] w-full bg-white/10">
