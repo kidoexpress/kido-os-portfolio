@@ -18,8 +18,8 @@ import { FakeSystemApp } from './apps/FakeSystemApp';
 import { ChaosApp } from './apps/ChaosApp';
 
 /* ── Viewport-aware terminal dimensions ───────────────── */
-const TERM_W = Math.min(720, window.innerWidth  - 96);
-const TERM_H = Math.min(460, window.innerHeight - 120);
+const TERM_W = Math.min(620, window.innerWidth  - 96);
+const TERM_H = Math.min(410, window.innerHeight - 120);
 
 /* ── Icon drop-shadow helper ──────────────────────────── */
 const shadow = (color: string) =>
@@ -32,7 +32,7 @@ function CmdIcon() {
       <rect x="1.5" y="3.5" width="41" height="33" rx="5" fill="#111" stroke="rgba(255,255,255,0.22)" strokeWidth="1.2"/>
       <rect x="1.5" y="3.5" width="41" height="11" rx="5" fill="#1e1e1e"/>
       <rect x="1.5" y="10" width="41" height="5" fill="#1e1e1e"/>
-      <text x="7" y="30" fill="#3ddc84" fontSize="12" fontFamily="'Courier New',monospace" fontWeight="700">&gt;_</text>
+      <text x="7" y="30" fill="#f5f5f5" fontSize="12" fontFamily="'Courier New',monospace" fontWeight="700">&gt;_</text>
     </svg>
   );
 }
@@ -67,13 +67,13 @@ type AppConfig = {
 };
 
 const APPS: AppConfig[] = [
-  { id: 'about',      title: 'About Me',        icon: <User size={13} />,         component: () => <FileExplorer initialSection="home" />,       width: 680, height: 480 },
+  { id: 'about',      title: 'About Me',        icon: <User size={13} />,         component: () => <FileExplorer initialSection="home" />,       width: 720, height: 540 },
   { id: 'terminal',   title: 'Command Prompt',  icon: <TerminalIcon size={13} />, component: Terminal,                                            width: TERM_W, height: TERM_H },
   { id: 'projects',   title: 'Projects',        icon: <Folder size={13} />,       component: () => <FileExplorer initialSection="projects" />,   width: 820, height: 520 },
   { id: 'research',   title: 'Research',        icon: <Folder size={13} />,       component: () => <FileExplorer initialSection="research" />,   width: 720, height: 480 },
   { id: 'experience', title: 'Experience',      icon: <Briefcase size={13} />,    component: () => <FileExplorer initialSection="experience" />, width: 720, height: 520 },
   { id: 'contact',    title: 'Contact',         icon: <Mail size={13} />,         component: () => <FileExplorer initialSection="contact" />,    width: 560, height: 440 },
-  { id: 'spotify',    title: 'Spotify.exe',     icon: <img className="spotify-titlebar-logo" src="/spotify-icon.png" alt="" />, component: SpotifyMiniApp, width: 520, height: 576 },
+  { id: 'spotify',    title: 'Spotify',         icon: <img className="spotify-titlebar-logo" src="/spotify-icon.png" alt="" />, component: SpotifyMiniApp, width: 520, height: 576 },
   { id: 'downloads',  title: 'Downloads',       icon: <Download size={13} />,     component: () => <FakeSystemApp title="Downloads" subtitle="Recently downloaded lore" lines={['resume_actual_latest.pdf', 'berkeley_deadline_survival_kit.zip', 'tiny_product_ideas.txt', 'worldcup_model_notes.csv']} />, width: 520, height: 380 },
   { id: 'recycle',    title: 'Recycle Bin',     icon: <Trash2 size={13} />,       component: RecycleBinApp,                                       width: 560, height: 400 },
   { id: 'researchLab', title: 'Research Lab',   icon: <FlaskConical size={13} />, component: ResearchLabApp,                                      width: 660, height: 500 },
@@ -234,7 +234,7 @@ export function Desktop() {
       iconEl: <CmdIcon />,
     },
     {
-      id: 'spotify', label: 'Spotify.exe', initialX: 108, initialY: 14,
+      id: 'spotify', label: 'Spotify', initialX: 108, initialY: 14,
       action: () => openApp('spotify'),
       iconEl: <img className="spotify-desktop-logo" src="/spotify-icon.png" alt="" />,
     },

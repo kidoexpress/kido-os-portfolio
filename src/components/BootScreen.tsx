@@ -1,158 +1,297 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// ASCII art for "KIDO"
-const KIDO_ASCII = `
+/* ── ASCII logo ──────────────────────────────────────── */
+const ASCII_ART = `
  ██╗  ██╗██╗██████╗  ██████╗
  ██║ ██╔╝██║██╔══██╗██╔═══██╗
  █████╔╝ ██║██║  ██║██║   ██║
  ██╔═██╗ ██║██║  ██║██║   ██║
  ██║  ██╗██║██████╔╝╚██████╔╝
- ╚═╝  ╚═╝╚═╝╚═════╝  ╚═════╝
-`.trim();
+ ╚═╝  ╚═╝╚═╝╚═════╝  ╚═════╝`.trim();
 
-type CheckLine = { label: string; delay: number };
+/* ── Sequence ────────────────────────────────────────── */
+type LT = 'ok' | 'cmd' | 'blank';
+type BL = { text: string; type: LT; gap: number };
 
-const CHECKS: CheckLine[] = [
-  { label: 'Initializing JoãoOS', delay: 180 },
-  { label: 'Loading caffeine', delay: 420 },
-  { label: 'Loading unfinished side projects', delay: 660 },
-  { label: 'Loading football analytics', delay: 900 },
+const SEQ: BL[] = [
+  { text: '[ OK ]  Mounting /dev/portfolio',        type: 'ok',    gap: 0   },
+  { text: '[ OK ]  Syncing project metadata',       type: 'ok',    gap: 210 },
+  { text: '[ OK ]  Calibrating curiosity',          type: 'ok',    gap: 210 },
+  { text: '[ OK ]  Launching desktop environment',  type: 'ok',    gap: 220 },
+  { text: '',                                        type: 'blank', gap: 110 },
+  { text: 'boot@kido:~$ starting session...',       type: 'cmd',   gap: 90  },
 ];
 
-const PROGRESS_START = 1040;
-const COMPLETE_DELAY = 1500;
+// t=80  → logo fade in
+// t=320 → subtitle
+// t=640 → lines start  (gap sum = 840ms → last at ~1480ms)
+// t=1680 → progress fills (900ms)
+// t=2780 → READY
+// t=3400 → onComplete  ≈ 3.4s
 
+/* ── Component ───────────────────────────────────────── */
 export function BootScreen({ onComplete }: { onComplete: () => void }) {
-  const [showAscii, setShowAscii] = useState(false);
-  const [showSub, setShowSub] = useState(false);
-  const [visibleChecks, setVisibleChecks] = useState(0);
-  const [progress, setProgress] = useState(0);
-  const [showReady, setShowReady] = useState(false);
-  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const [showLogo,     setShowLogo]     = useState(false);
+  const [showSub,      setShowSub]      = useState(false);
+  const [visibleCount, setVisibleCount] = useState(0);
+  const [progress,     setProgress]     = useState<number | null>(null);
+  const [showReady,    setShowReady]    = useState(false);
+
+  const timeouts = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const ticker   = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
-    const t = timers.current;
+    const t = timeouts.current;
 
-    t.push(setTimeout(() => setShowAscii(true), 100));
-    t.push(setTimeout(() => setShowSub(true), 280));
+    t.push(setTimeout(() => setShowLogo(true), 80));
+    t.push(setTimeout(() => setShowSub(true),  320));
 
-    CHECKS.forEach((_, i) => {
-      t.push(setTimeout(() => setVisibleChecks(i + 1), CHECKS[i].delay));
+    let cum = 640;
+    SEQ.forEach((line, i) => {
+      cum += line.gap;
+      t.push(setTimeout(() => setVisibleCount(i + 1), cum));
     });
 
     t.push(setTimeout(() => {
+      setProgress(0);
       let p = 0;
-      const interval = setInterval(() => {
-        p += 4;
+      ticker.current = setInterval(() => {
+        p += 2;
         setProgress(Math.min(p, 100));
-        if (p >= 100) {
-          clearInterval(interval);
-          setShowReady(true);
+        if (p >= 100 && ticker.current) {
+          clearInterval(ticker.current);
+          ticker.current = null;
         }
-      }, 12);
-      t.push(interval as unknown as ReturnType<typeof setTimeout>);
-    }, PROGRESS_START));
+      }, 18);
+    }, 1680));
 
-    t.push(setTimeout(onComplete, COMPLETE_DELAY));
+    t.push(setTimeout(() => setShowReady(true), 2780));
+    t.push(setTimeout(onComplete,               3400));
 
-    return () => { t.forEach(clearTimeout); t.forEach(clearInterval as never); };
+    return () => {
+      t.forEach(clearTimeout);
+      if (ticker.current) clearInterval(ticker.current);
+    };
   }, [onComplete]);
 
+  const filled = progress != null ? Math.floor(progress / 5) : 0;
+  const bar    = '█'.repeat(filled) + '░'.repeat(20 - filled);
+  const pct    = progress != null ? `${String(progress).padStart(3)}%` : '';
+
   return (
-    <div className="flex h-full w-full flex-col items-center justify-center bg-black font-mono">
-      {/* Scanline overlay */}
+    <div
+      style={{
+        position: 'relative',
+        height: '100%',
+        width: '100%',
+        background: '#000',
+        overflow: 'hidden',
+        fontFamily: '"JetBrains Mono", "Cascadia Code", Consolas, monospace',
+        WebkitFontSmoothing: 'antialiased',
+        /* true viewport centering */
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      {/* Subtle radial glow */}
       <div
-        className="pointer-events-none absolute inset-0 z-10 opacity-[0.04]"
         style={{
-          backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.8) 2px, rgba(0,0,0,0.8) 4px)',
+          position: 'absolute',
+          inset: 0,
+          background:
+            'radial-gradient(ellipse 50% 45% at 50% 50%, rgba(255,255,255,0.015) 0%, transparent 70%)',
+          pointerEvents: 'none',
         }}
       />
 
-      <div className="relative z-20 flex flex-col items-center gap-6 px-8">
-        {/* ASCII art */}
+      {/*
+        ── Content column ───────────────────────────────
+        alignItems: flex-start  → children start at the
+        natural left edge of the column.
+        The column itself has no explicit width, so it
+        auto-sizes to its widest child (the terminal lines).
+        The outer flex-center then centers THAT block on screen.
+        Logo + subtitle override with alignSelf: center.
+      */}
+      <div
+        style={{
+          position: 'relative',
+          zIndex: 2,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'flex-start',
+        }}
+      >
+        {/* ── ASCII logo (override: centered) ── */}
         <AnimatePresence>
-          {showAscii && (
+          {showLogo && (
             <motion.pre
-              initial={{ opacity: 0, y: -8 }}
+              key="logo"
+              initial={{ opacity: 0, y: -6 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-              className="text-[0.55rem] leading-[1.4] text-white/80 sm:text-[0.65rem]"
-              style={{ fontFamily: 'monospace' }}
+              transition={{ duration: 0.5, ease: 'easeOut' }}
+              style={{
+                alignSelf: 'center',
+                color: 'rgba(255,255,255,0.65)',
+                fontSize: 11,
+                lineHeight: 1.44,
+                letterSpacing: '-0.01em',
+                fontFamily: 'inherit',
+                marginBottom: 20,
+                userSelect: 'none',
+              }}
             >
-              {KIDO_ASCII}
+              {ASCII_ART}
             </motion.pre>
           )}
         </AnimatePresence>
 
-        {/* KIDO OS label */}
+        {/* ── Subtitle (override: centered) ── */}
         <AnimatePresence>
           {showSub && (
             <motion.div
+              key="sub"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.3 }}
-              className="flex flex-col items-center gap-1"
+              transition={{ duration: 0.38 }}
+              style={{
+                alignSelf: 'center',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 11,
+                marginBottom: 44,
+              }}
             >
-              <span className="text-[0.65rem] tracking-[0.35em] text-white/60 uppercase">
-                KIDO OS  v1.0
+              <span
+                style={{
+                  fontSize: 10.5,
+                  letterSpacing: '0.30em',
+                  color: 'rgba(255,255,255,0.28)',
+                  textTransform: 'uppercase',
+                  userSelect: 'none',
+                }}
+              >
+                Kido OS &nbsp;·&nbsp; v1.0
               </span>
-              <div className="h-px w-40 bg-white/10" />
+              <div
+                style={{
+                  width: 160,
+                  height: 1,
+                  background: 'rgba(255,255,255,0.07)',
+                }}
+              />
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* System checks */}
-        <div className="w-64 space-y-1.5">
-          {CHECKS.slice(0, visibleChecks).map((check, i) => (
+        {/* ── Boot lines (left-aligned in the centered block) ── */}
+        <div style={{ fontSize: 12.5, marginBottom: 28 }}>
+          {SEQ.slice(0, visibleCount).map((line, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, x: -6 }}
+              initial={{ opacity: 0, x: -4 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.2 }}
-              className="flex items-center justify-between text-[0.65rem]"
+              transition={{ duration: 0.18 }}
             >
-              <span className="text-white/40">{check.label}...</span>
-              <span className="text-emerald-400/80">✓</span>
+              {line.type === 'blank' ? (
+                <div style={{ height: '0.55em' }} />
+              ) : line.type === 'ok' ? (
+                <div style={{ lineHeight: 1.85 }}>
+                  <span style={{ color: 'rgba(255,255,255,0.22)' }}>
+                    {'[ OK ]'}
+                  </span>
+                  <span style={{ color: 'rgba(255,255,255,0.62)' }}>
+                    {'  '}{line.text.replace(/^\[ OK \]\s*/, '')}
+                  </span>
+                </div>
+              ) : (
+                <div style={{ lineHeight: 1.85 }}>
+                  <span style={{ color: 'rgba(255,255,255,0.26)' }}>
+                    {line.text.slice(0, line.text.indexOf('$') + 1)}
+                  </span>
+                  <span style={{ color: 'rgba(255,255,255,0.78)' }}>
+                    {line.text.slice(line.text.indexOf('$') + 1)}
+                  </span>
+                </div>
+              )}
             </motion.div>
           ))}
         </div>
 
-        {/* Progress bar */}
+        {/* ── Progress bar ── */}
         <AnimatePresence>
-          {progress > 0 && (
+          {progress != null && (
             <motion.div
+              key="bar"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="w-64"
+              transition={{ duration: 0.28 }}
+              style={{ marginBottom: 24 }}
             >
-              <div className="mb-1.5 flex justify-between text-[0.55rem] text-white/25">
-                <span>System ready</span>
-                <span>{progress}%</span>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  marginBottom: 7,
+                  fontSize: 10.5,
+                }}
+              >
+                <span style={{ color: 'rgba(255,255,255,0.20)', letterSpacing: '0.03em' }}>
+                  system init
+                </span>
+                <span
+                  style={{
+                    color: 'rgba(255,255,255,0.28)',
+                    letterSpacing: '0.04em',
+                    fontVariantNumeric: 'tabular-nums',
+                  }}
+                >
+                  {pct}
+                </span>
               </div>
-              <div className="h-[1px] w-full bg-white/10">
-                <div
-                  className="h-full bg-white/50 transition-all duration-75"
-                  style={{ width: `${progress}%` }}
-                />
+              <div
+                style={{
+                  fontSize: 11.5,
+                  letterSpacing: '0.04em',
+                  color: 'rgba(255,255,255,0.36)',
+                  fontFamily: 'inherit',
+                }}
+              >
+                [{bar}]
               </div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Ready */}
+        {/* ── READY ── */}
         <AnimatePresence>
           {showReady && (
             <motion.div
+              key="ready"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.4 }}
-              className="text-[0.6rem] tracking-[0.3em] text-white/35 uppercase"
+              transition={{ duration: 0.45 }}
+              style={{
+                fontSize: 12.5,
+                letterSpacing: '0.14em',
+                color: 'rgba(255,255,255,0.82)',
+                lineHeight: 1,
+              }}
             >
-              Ready
+              READY{' '}
               <span
-                className="ml-1 inline-block h-2.5 w-1.5 bg-white/50 align-middle"
-                style={{ animation: 'blink 1s step-end infinite' }}
+                style={{
+                  display: 'inline-block',
+                  width: 7,
+                  height: 13,
+                  background: 'rgba(255,255,255,0.68)',
+                  verticalAlign: 'middle',
+                  marginLeft: 2,
+                  animation: 'blink 1s step-end infinite',
+                }}
               />
             </motion.div>
           )}

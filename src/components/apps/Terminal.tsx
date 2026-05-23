@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { projects, experiences, skills, profile } from '../../data/portfolio';
 
-type Line = { id: number; type: 'prompt' | 'output' | 'error' | 'success' | 'dim' | 'blank'; text: string };
+type Line = { id: number; type: 'prompt' | 'output' | 'error' | 'success' | 'dim' | 'blank' | 'heading'; text: string };
 
 let lineId = 0;
 const L = (type: Line['type'], text: string): Line => ({ id: lineId++, type, text });
@@ -11,19 +11,17 @@ const PROMPT_STR = `C:\\Users\\kido>`;
 /* ── Help (ASCII table) ─────────────────────────────── */
 const HELP: Line[] = [
   L('blank',   ''),
-  L('dim',     '  ┌──────────────────────────────────────────────────────────────┐'),
-  L('output',  '  │ AVAILABLE COMMANDS                                           │'),
-  L('dim',     '  ├──────────────────────────────────────────────────────────────┤'),
-  L('output',  '  │ help        - show this help message                         │'),
-  L('output',  '  │ about       - learn about me                                 │'),
-  L('output',  '  │ projects    - browse my projects                             │'),
-  L('output',  '  │ experience  - view experience                                │'),
-  L('output',  '  │ research    - view research                                  │'),
-  L('output',  '  │ skills      - technical skill set                            │'),
-  L('output',  '  │ contact     - get contact information                        │'),
-  L('output',  '  │ neofetch    - system information                             │'),
-  L('output',  '  │ clear       - clear the terminal                             │'),
-  L('dim',     '  └──────────────────────────────────────────────────────────────┘'),
+  L('dim',     '  ┌──────────────────────────────────────────────┐'),
+  L('output',  '  │ AVAILABLE COMMANDS                           │'),
+  L('dim',     '  ├──────────────────────────────────────────────┤'),
+  L('output',  '  │ help        show this help message           │'),
+  L('output',  '  │ about       learn about me                   │'),
+  L('output',  '  │ projects    browse my projects               │'),
+  L('output',  '  │ experience  view experience                  │'),
+  L('output',  '  │ research    view research                    │'),
+  L('output',  '  │ contact     get contact information          │'),
+  L('output',  '  │ clear       clear the terminal               │'),
+  L('dim',     '  └──────────────────────────────────────────────┘'),
   L('blank',   ''),
 ];
 
@@ -76,10 +74,14 @@ const getSkills = (): Line[] => [
 
 const getContact = (): Line[] => [
   L('blank',   ''),
-  L('output',  `  email       ${profile.email.replace('mailto:', '')}`),
-  L('output',  `  github      ${profile.github}`),
-  L('output',  `  linkedin    ${profile.linkedin}`),
-  L('output',  `  location    ${profile.location}`),
+  L('output',  '  LinkedIn:'),
+  L('output',  `  ${profile.linkedin}`),
+  L('blank',   ''),
+  L('output',  '  GitHub:'),
+  L('output',  `  ${profile.github}`),
+  L('blank',   ''),
+  L('output',  '  Email:'),
+  L('output',  `  [${profile.email.replace('mailto:', '')}](${profile.email})`),
   L('blank',   ''),
 ];
 
@@ -109,17 +111,14 @@ const BOOT_BANNER: Line[] = [
   L('blank',   ''),
   L('success', `  hi, I'm João Guilherme Kido Carvalho`),
   L('blank',   ''),
-  L('dim',     `  Type 'help' to see available commands.`),
+  L('dim',     `  type 'help' to see available commands.`),
   L('blank',   ''),
-  L('dim',     '  ┌──────────────────────────────────────────────┐'),
-  L('output',  '  │ ABOUT ME                                     │'),
-  L('dim',     '  ├──────────────────────────────────────────────┤'),
-  L('output',  '  │ CS student and builder working across AI,    │'),
-  L('output',  '  │ product, simulations, education, and impact. │'),
-  L('output',  '  │                                              │'),
-  L('output',  '  │ I like building tools that make complex      │'),
-  L('output',  '  │ systems easier to understand.                │'),
-  L('dim',     '  └──────────────────────────────────────────────┘'),
+  L('heading', '  ABOUT ME'),
+  L('blank',   ''),
+  L('output',  '  CS student and builder working across AI, product,'),
+  L('output',  '  simulations, education, and social impact.'),
+  L('blank',   ''),
+  L('output',  '  I build tools that make complex systems easier to understand.'),
   L('blank',   ''),
 ];
 
@@ -157,8 +156,20 @@ export function Terminal({ onOpenApp }: Props) {
         next.push(L('success', '  Welcome aboard.'));
         break;
       case 'spotify':
-        next.push(L('success', '  Opening Spotify.exe...'));
+        next.push(L('success', '  Opening Spotify...'));
         onOpenApp?.('spotify');
+        break;
+      case 'linkedin':
+        window.open(profile.linkedin, '_blank', 'noopener,noreferrer');
+        next.push(L('output', `  Opening LinkedIn: ${profile.linkedin}`));
+        break;
+      case 'github':
+        window.open(profile.github, '_blank', 'noopener,noreferrer');
+        next.push(L('output', `  Opening GitHub: ${profile.github}`));
+        break;
+      case 'email':
+        window.location.href = profile.email;
+        next.push(L('output', `  Opening email: ${profile.email.replace('mailto:', '')}`));
         break;
       case 'mood':
         next.push(L('output', '  Current mood:'));
@@ -243,19 +254,20 @@ export function Terminal({ onOpenApp }: Props) {
       setCmdIdx(idx); setInput(idx === -1 ? '' : (cmdHist[idx] ?? ''));
     } else if (e.key === 'Tab') {
       e.preventDefault();
-      const cmds = ['help','about','projects','experience','research','skills','contact','neofetch','ls','dir','clear','date','ver','sudo hire joao','spotify','mood','origin_story','coffee','matrix','berkeley','whoami','easteregg'];
+      const cmds = ['help','about','projects','experience','research','skills','contact','linkedin','github','email','neofetch','ls','dir','clear','date','ver','sudo hire joao','spotify','mood','origin_story','coffee','matrix','berkeley','whoami','easteregg'];
       const match = cmds.find((c) => c.startsWith(input) && c !== input);
       if (match) setInput(match);
     }
   };
 
   const COLOR: Record<Line['type'], string> = {
-    prompt:  'terminal-dim',
+    prompt:  'terminal-prompt',
     output:  'terminal-output',
     error:   'terminal-error',
     success: 'terminal-success',
     dim:     'terminal-dim',
     blank:   '',
+    heading: 'terminal-heading',
   };
 
   return (
@@ -263,7 +275,7 @@ export function Terminal({ onOpenApp }: Props) {
       {/* Output */}
       <div ref={scrollRef} className="win-terminal-output">
         {history.map((l) => (
-          <div key={l.id} className={`whitespace-pre-wrap break-all ${COLOR[l.type]}`}>
+          <div key={l.id} className={`whitespace-pre-wrap ${COLOR[l.type]}`}>
             {l.type === 'blank' ? ' ' : l.text}
           </div>
         ))}
@@ -284,7 +296,7 @@ export function Terminal({ onOpenApp }: Props) {
               outline: 'none',
               padding: 0,
               margin: 0,
-              color: 'rgba(255,255,255,0.88)',
+              color: '#cccccc',
               caretColor: 'transparent',
               fontFamily: 'inherit',
               fontSize: 'inherit',

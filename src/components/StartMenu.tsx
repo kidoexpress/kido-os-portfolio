@@ -2,12 +2,14 @@ import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   Search, FlaskConical, BookOpen, Mail, Briefcase,
-  Terminal, FolderOpen, Globe, BarChart2, Brain, Leaf,
+  Terminal, FolderOpen, Globe, BarChart2, Brain, Leaf, Github, Linkedin,
 } from 'lucide-react';
 import type { WinAppId } from './Taskbar';
+import { profile } from '../data/portfolio';
 
 type PinnedApp = { id: WinAppId; label: string; icon: React.ReactNode; bg: string };
 type RecItem  = { label: string; sub: string; icon: React.ReactNode; bg: string };
+type SocialResult = { label: string; sub: string; icon: React.ReactNode; action: () => void };
 
 const PINNED: PinnedApp[] = [
   { id: 'projects',   label: 'Projects',   icon: <FlaskConical size={20} />, bg: '#0078d4' },
@@ -15,7 +17,7 @@ const PINNED: PinnedApp[] = [
   { id: 'experience', label: 'Experience', icon: <Briefcase size={20} />,    bg: '#107c10' },
   { id: 'contact',    label: 'Contact',    icon: <Mail size={20} />,          bg: '#0099bc' },
   { id: 'terminal',   label: 'Terminal',   icon: <Terminal size={20} />,      bg: '#1a1a1a' },
-  { id: 'spotify',    label: 'Spotify.exe', icon: <Globe size={20} />,        bg: '#1db954' },
+  { id: 'spotify',    label: 'Spotify',    icon: <img className="startmenu-spotify-logo" src="/spotify-icon.png" alt="" />, bg: 'rgba(255,255,255,0.04)' },
 ];
 
 const RECOMMENDED: RecItem[] = [
@@ -53,6 +55,29 @@ export function StartMenu({ open, onClose, onOpenApp }: Props) {
   const filteredRec = query
     ? RECOMMENDED.filter((r) => r.label.toLowerCase().includes(query.toLowerCase()))
     : RECOMMENDED;
+
+  const socialResults: SocialResult[] = query
+    ? [
+        {
+          label: 'GitHub',
+          sub: 'github.com/kidoexpress',
+          icon: <Github size={16} />,
+          action: () => window.open(profile.github, '_blank', 'noopener,noreferrer'),
+        },
+        {
+          label: 'LinkedIn',
+          sub: 'linkedin.com/in/joao-guilherme-kido-carvalho',
+          icon: <Linkedin size={16} />,
+          action: () => window.open(profile.linkedin, '_blank', 'noopener,noreferrer'),
+        },
+        {
+          label: 'Contact',
+          sub: 'Open contact app',
+          icon: <Mail size={16} />,
+          action: () => onOpenApp('contact'),
+        },
+      ].filter((item) => `${item.label} ${item.sub}`.toLowerCase().includes(query.toLowerCase()))
+    : [];
 
   return (
     <AnimatePresence>
@@ -109,8 +134,35 @@ export function StartMenu({ open, onClose, onOpenApp }: Props) {
 
             <div className="startmenu-divider" />
 
+            {socialResults.length > 0 && (
+              <>
+                <div className="startmenu-section-title">Search results</div>
+                <div className="startmenu-recommended">
+                  {socialResults.map((item) => (
+                    <button
+                      key={item.label}
+                      className="startmenu-rec-item startmenu-action-result"
+                      onClick={() => { item.action(); onClose(); }}
+                    >
+                      <div className="startmenu-rec-icon social">
+                        {item.icon}
+                      </div>
+                      <div>
+                        <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.82)', fontWeight: 400 }}>
+                          {item.label}
+                        </div>
+                        <div style={{ fontSize: 11.5, color: 'rgba(255,255,255,0.38)', marginTop: 1 }}>
+                          {item.sub}
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+
             {/* Recommended */}
-            {filteredRec.length > 0 && (
+            {filteredRec.length > 0 && socialResults.length === 0 && (
               <>
                 <div className="startmenu-section-title">Recommended</div>
                 <div className="startmenu-recommended">
@@ -136,7 +188,7 @@ export function StartMenu({ open, onClose, onOpenApp }: Props) {
               </>
             )}
 
-            {query && filteredPins.length === 0 && filteredRec.length === 0 && (
+            {query && filteredPins.length === 0 && filteredRec.length === 0 && socialResults.length === 0 && (
               <div style={{ padding: '24px', textAlign: 'center', fontSize: 13, color: 'rgba(255,255,255,0.35)' }}>
                 No results for "{query}"
               </div>

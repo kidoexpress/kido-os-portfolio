@@ -31,9 +31,9 @@ export const profile = {
   tagline: 'I design and ship systems at the intersection of AI, product, and public impact.',
   focus: 'Currently exploring AI-assisted healthcare, economic simulation tools, and products that make complex decisions legible.',
   location: 'Berkeley, CA',
-  email: 'mailto:hello@joaokido.com',
-  github: 'https://github.com/joaokido',
-  linkedin: 'https://www.linkedin.com/in/joaokido',
+  email: 'mailto:joaokido@berkeley.edu',
+  github: 'https://github.com/kidoexpress',
+  linkedin: 'https://www.linkedin.com/in/joao-guilherme-kido-carvalho',
   version: '2.0',
 };
 
@@ -56,7 +56,7 @@ export const projects: Project[] = [
     status: 'In progress',
     year: '2025',
     links: {
-      github: 'https://github.com/joaokido/world-cup-performance-lab',
+      github: 'https://github.com/kidoexpress/world-cup-performance-lab',
     },
   },
   {
@@ -71,7 +71,7 @@ export const projects: Project[] = [
     status: 'Prototype',
     year: '2025',
     links: {
-      github: 'https://github.com/joaokido/what-if-economic-simulator',
+      github: 'https://github.com/kidoexpress/what-if-economic-simulator',
       demo: 'https://what-if-sim.vercel.app',
     },
   },
@@ -126,7 +126,7 @@ export const projects: Project[] = [
     status: 'Coursework',
     year: '2024–2025',
     links: {
-      github: 'https://github.com/joaokido',
+      github: 'https://github.com/kidoexpress',
     },
   },
 ];

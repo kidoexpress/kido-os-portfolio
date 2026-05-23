@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Home, Folder, BookOpen, Briefcase, Mail, FlaskConical,
-  ExternalLink, Github, ArrowLeft, ChevronRight,
+  ExternalLink, Github, Linkedin, ArrowLeft, ChevronRight,
+  FileText, Download, MapPin, GraduationCap,
 } from 'lucide-react';
-import { projects, experiences, skills, about, profile } from '../../data/portfolio';
+import { projects, experiences, skills, profile } from '../../data/portfolio';
 
 type Section = 'home' | 'projects' | 'research' | 'experience' | 'contact';
 
@@ -113,31 +114,217 @@ export function FileExplorer({ initialSection = 'home' }: Props) {
 
 /* ─── Sections ─────────────────────────────────────────────── */
 
+/* ── Home: top-level state (profile ↔ resume viewer) ─── */
 function HomeSection({ onNavigate }: { onNavigate: (s: Section) => void }) {
+  const [imgErr,      setImgErr]      = useState(false);
+  const [view,        setView]        = useState<'profile' | 'resume'>('profile');
+
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
-      {/* Identity */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 24, padding: '4px 2px' }}>
-        <div style={{
-          width: 52, height: 52, borderRadius: '50%',
-          background: 'linear-gradient(135deg,#0078d4,#5c2d91)',
-          display: 'grid', placeItems: 'center',
-          fontSize: 18, fontWeight: 300, color: 'white',
-        }}>JK</div>
-        <div>
-          <div style={{ fontSize: 16, fontWeight: 500, color: 'rgba(255,255,255,0.9)' }}>{profile.name}</div>
-          <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.45)', marginTop: 2 }}>{profile.role}</div>
-          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.30)', marginTop: 2 }}>{profile.location}</div>
+    <AnimatePresence mode="wait">
+      {view === 'profile' ? (
+        <ProfileContent
+          key="profile"
+          imgErr={imgErr}
+          setImgErr={setImgErr}
+          onViewResume={() => setView('resume')}
+          onNavigate={onNavigate}
+        />
+      ) : (
+        <ResumeViewer key="resume" onBack={() => setView('profile')} />
+      )}
+    </AnimatePresence>
+  );
+}
+
+/* ── Profile content ─────────────────────────────────── */
+function ProfileContent({
+  imgErr, setImgErr, onViewResume, onNavigate,
+}: {
+  imgErr: boolean;
+  setImgErr: (v: boolean) => void;
+  onViewResume: () => void;
+  onNavigate: (s: Section) => void;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: -8 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -8 }}
+      transition={{ duration: 0.18 }}
+    >
+      {/* ── Profile row ──────────────────────────────────── */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 16 }}>
+        {/* Photo — swap /public/avatar.jpg to update */}
+        <motion.div
+          whileHover={{ scale: 1.04 }}
+          transition={{ duration: 0.18 }}
+          style={{
+            width: 68, height: 68, borderRadius: '50%', flexShrink: 0,
+            overflow: 'hidden',
+            border: '2px solid rgba(255,255,255,0.12)',
+            background: 'linear-gradient(135deg,#0078d4,#5c2d91)',
+            display: 'grid', placeItems: 'center',
+            cursor: 'default',
+          }}
+        >
+          {!imgErr ? (
+            <img
+              src="/avatar.jpg"
+              alt="João Kido"
+              onError={() => setImgErr(true)}
+              style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 15%' }}
+            />
+          ) : (
+            <span style={{ fontSize: 24, fontWeight: 300, color: 'rgba(255,255,255,0.85)' }}>JK</span>
+          )}
+        </motion.div>
+
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontSize: 17, fontWeight: 500, color: 'rgba(255,255,255,0.92)', marginBottom: 3 }}>
+            {profile.name}
+          </div>
+          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.40)', marginBottom: 7 }}>
+            CS Student · Builder · Researcher
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+              <MapPin size={10} style={{ color: 'rgba(255,255,255,0.25)', flexShrink: 0 }} />
+              <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.28)' }}>{profile.location}</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+              <span className="about-pulse-dot" />
+              <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)' }}>Open to opportunities</span>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div style={{ fontSize: 13, lineHeight: 1.7, color: 'rgba(255,255,255,0.55)', marginBottom: 24, maxWidth: 520 }}>
-        {about.headline}
+      {/* ── Divider ──────────────────────────────────────── */}
+      <div style={{ height: 1, background: 'rgba(255,255,255,0.055)', marginBottom: 13 }} />
+
+      {/* ── Currently ────────────────────────────────────── */}
+      <div className="about-panel" style={{ marginBottom: 11, padding: '10px 13px', display: 'flex', alignItems: 'center', gap: 10 }}>
+        <div style={{
+          width: 32, height: 32, borderRadius: 7, flexShrink: 0,
+          background: 'rgba(0,120,212,0.12)',
+          border: '1px solid rgba(0,120,212,0.18)',
+          display: 'grid', placeItems: 'center',
+        }}>
+          <Briefcase size={14} style={{ color: '#0078d4' }} />
+        </div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontSize: 9.5, color: 'rgba(255,255,255,0.28)', textTransform: 'uppercase', letterSpacing: '0.09em', marginBottom: 2 }}>Currently</div>
+          <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.80)', fontWeight: 500 }}>Itaú Unibanco</div>
+        </div>
+        <span style={{
+          fontSize: 11, color: 'rgba(255,255,255,0.32)',
+          background: 'rgba(255,255,255,0.05)',
+          border: '1px solid rgba(255,255,255,0.07)',
+          borderRadius: 4, padding: '2px 8px',
+          whiteSpace: 'nowrap',
+        }}>Investment Banking Tech</span>
       </div>
 
+      {/* ── Bio ──────────────────────────────────────────── */}
+      <div style={{
+        fontSize: 13, lineHeight: 1.74, color: 'rgba(255,255,255,0.55)',
+        marginBottom: 12, padding: '11px 13px',
+        background: 'rgba(255,255,255,0.025)',
+        borderRadius: 8, border: '1px solid rgba(255,255,255,0.055)',
+      }}>
+        I build software and think carefully about systems. Currently engineering internal
+        banking technology at Itaú Unibanco. Also into AI research, simulation tools,
+        and cancer biology on the side.
+      </div>
+
+      {/* ── Stat cards ───────────────────────────────────── */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 7, marginBottom: 12 }}>
+        {[
+          { label: 'University', value: 'UC Berkeley', icon: <GraduationCap size={12} style={{ color: '#0078d4' }} /> },
+          { label: 'Projects',   value: `${projects.length} active`,  icon: <FlaskConical size={12} style={{ color: '#0078d4' }} /> },
+          { label: 'Research',   value: 'Cancer biology', icon: <BookOpen size={12} style={{ color: '#a78bfa' }} /> },
+        ].map((fact) => (
+          <div key={fact.label} className="about-stat-card">
+            <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 4 }}>
+              {fact.icon}
+              <span style={{ fontSize: 9.5, color: 'rgba(255,255,255,0.26)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                {fact.label}
+              </span>
+            </div>
+            <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.70)', fontWeight: 500 }}>{fact.value}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* ── Tech strip ───────────────────────────────────── */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, marginBottom: 13 }}>
+        {['TypeScript', 'React', 'Python', 'Java', 'SQL', 'AI / ML'].map((t) => (
+          <span key={t} className="explorer-tag" style={{ cursor: 'default' }}>{t}</span>
+        ))}
+      </div>
+
+      {/* ── Resume card ──────────────────────────────────── */}
+      <div className="about-resume-card" style={{ marginBottom: 14 }}>
+        <div style={{
+          width: 38, height: 38, borderRadius: 7, flexShrink: 0,
+          background: 'rgba(0,120,212,0.12)',
+          border: '1px solid rgba(0,120,212,0.18)',
+          display: 'grid', placeItems: 'center',
+        }}>
+          <FileText size={16} style={{ color: '#0078d4' }} />
+        </div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontSize: 13, fontWeight: 500, color: 'rgba(255,255,255,0.82)', marginBottom: 2 }}>
+            Curriculum Vitae
+          </div>
+          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.26)' }}>
+            resume.pdf · drop at /public/resume.pdf
+          </div>
+        </div>
+        <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
+          <button
+            className="win-btn"
+            style={{ fontSize: 12, gap: 5 }}
+            onClick={onViewResume}
+          >
+            <ExternalLink size={12} /> View
+          </button>
+          <a
+            href="/resume.pdf"
+            download="joao-kido-resume.pdf"
+            className="win-btn-primary"
+            style={{ fontSize: 12, gap: 5 }}
+          >
+            <Download size={12} /> Download
+          </a>
+        </div>
+      </div>
+
+      {/* ── Connect ──────────────────────────────────────── */}
+      <div className="explorer-section-label">Connect</div>
+      <div style={{ display: 'flex', gap: 7, marginBottom: 18 }}>
+        {[
+          { label: 'LinkedIn', href: profile.linkedin, icon: <Linkedin size={13} /> },
+          { label: 'GitHub',   href: profile.github,   icon: <Github size={13} />   },
+          { label: 'Email',    href: profile.email,    icon: <Mail size={13} />      },
+        ].map((s) => (
+          <a
+            key={s.label}
+            href={s.href}
+            target={s.href.startsWith('mailto') ? undefined : '_blank'}
+            rel="noopener noreferrer"
+            className="win-btn"
+            style={{ flex: 1, justifyContent: 'center', gap: 6, fontSize: 12 }}
+          >
+            {s.icon} {s.label}
+          </a>
+        ))}
+      </div>
+
+      {/* ── Quick access ─────────────────────────────────── */}
       <div className="explorer-section-label">Quick access</div>
-      <div className="explorer-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))' }}>
-        {NAV.filter(n => n.id !== 'home').map((item) => (
+      <div className="explorer-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(110px, 1fr))' }}>
+        {NAV.filter((n) => n.id !== 'home').map((item) => (
           <div key={item.id} className="explorer-card" onClick={() => onNavigate(item.id)}>
             <div className="explorer-card-icon" style={{ background: '#0078d4', color: 'white' }}>
               {item.icon}
@@ -146,12 +333,132 @@ function HomeSection({ onNavigate }: { onNavigate: (s: Section) => void }) {
           </div>
         ))}
       </div>
+    </motion.div>
+  );
+}
 
-      <div className="explorer-section-label" style={{ marginTop: 20 }}>Research interests</div>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-        {about.interests.map((i) => (
-          <span key={i} className="explorer-tag">{i}</span>
-        ))}
+/* ── Embedded resume viewer ──────────────────────────── */
+function ResumeViewer({ onBack }: { onBack: () => void }) {
+  const [pdfState, setPdfState] = useState<'checking' | 'ready' | 'missing'>('checking');
+
+  useEffect(() => {
+    fetch('/resume.pdf', { method: 'HEAD' })
+      .then((r) => setPdfState(r.ok && r.headers.get('content-type')?.includes('pdf') ? 'ready' : 'missing'))
+      .catch(() => setPdfState('missing'));
+  }, []);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: 22 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 22 }}
+      transition={{ duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
+      style={{ display: 'flex', flexDirection: 'column', gap: 10, height: '100%' }}
+    >
+      {/* Toolbar */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
+        <button className="win-btn" onClick={onBack} style={{ gap: 5, fontSize: 12 }}>
+          <ArrowLeft size={13} /> Back
+        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1, minWidth: 0 }}>
+          <FileText size={12} style={{ color: 'rgba(255,255,255,0.30)', flexShrink: 0 }} />
+          <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.40)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            resume.pdf — João Kido
+          </span>
+        </div>
+        {pdfState === 'ready' && (
+          <a
+            href="/resume.pdf"
+            download="joao-kido-resume.pdf"
+            className="win-btn"
+            style={{ gap: 5, fontSize: 12, flexShrink: 0 }}
+          >
+            <Download size={12} /> Download
+          </a>
+        )}
+      </div>
+
+      {/* Content area */}
+      <div style={{
+        flex: 1,
+        minHeight: 420,
+        background: 'rgba(255,255,255,0.02)',
+        borderRadius: 8,
+        border: '1px solid rgba(255,255,255,0.07)',
+        overflow: 'hidden',
+        position: 'relative',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+
+        {/* Checking */}
+        {pdfState === 'checking' && (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, opacity: 0.5 }}>
+            <div style={{
+              width: 22, height: 22, border: '2px solid rgba(255,255,255,0.15)',
+              borderTopColor: 'rgba(255,255,255,0.6)', borderRadius: '50%',
+              animation: 'spin 0.75s linear infinite',
+            }} />
+            <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.40)' }}>Loading…</span>
+          </div>
+        )}
+
+        {/* PDF not found */}
+        {pdfState === 'missing' && (
+          <motion.div
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.22 }}
+            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14, padding: 32, textAlign: 'center' }}
+          >
+            <div style={{
+              width: 56, height: 56, borderRadius: 14,
+              background: 'rgba(255,255,255,0.04)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              display: 'grid', placeItems: 'center',
+            }}>
+              <FileText size={24} style={{ color: 'rgba(255,255,255,0.25)' }} />
+            </div>
+            <div>
+              <div style={{ fontSize: 14, fontWeight: 500, color: 'rgba(255,255,255,0.65)', marginBottom: 6 }}>
+                resume.pdf not found
+              </div>
+              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.32)', lineHeight: 1.6, maxWidth: 280 }}>
+                Drop your PDF at{' '}
+                <code style={{
+                  fontSize: 11, color: 'rgba(255,255,255,0.45)',
+                  background: 'rgba(255,255,255,0.06)',
+                  padding: '1px 6px', borderRadius: 4,
+                }}>
+                  /public/resume.pdf
+                </code>
+                {' '}and it will appear here automatically.
+              </div>
+            </div>
+            <button
+              className="win-btn"
+              style={{ gap: 5, fontSize: 12 }}
+              onClick={() => {
+                setPdfState('checking');
+                fetch('/resume.pdf', { method: 'HEAD' })
+                  .then((r) => setPdfState(r.ok && r.headers.get('content-type')?.includes('pdf') ? 'ready' : 'missing'))
+                  .catch(() => setPdfState('missing'));
+              }}
+            >
+              ↺ Check again
+            </button>
+          </motion.div>
+        )}
+
+        {/* PDF ready — full iframe */}
+        {pdfState === 'ready' && (
+          <iframe
+            src="/resume.pdf#toolbar=0&navpanes=0&scrollbar=1"
+            style={{ width: '100%', height: '100%', minHeight: 420, border: 'none', display: 'block' }}
+            title="João Kido — Resume"
+          />
+        )}
       </div>
     </motion.div>
   );
@@ -338,9 +645,9 @@ function ExperienceSection() {
 
 function ContactSection() {
   const links = [
-    { label: 'Email', value: 'hello@joaokido.com', href: 'mailto:hello@joaokido.com', color: '#0078d4' },
-    { label: 'GitHub', value: 'github.com/joaokido', href: 'https://github.com/joaokido', color: '#6e5494' },
-    { label: 'LinkedIn', value: 'linkedin.com/in/joaokido', href: 'https://linkedin.com/in/joaokido', color: '#0a66c2' },
+    { label: 'LinkedIn', value: 'linkedin.com/in/joao-guilherme-kido-carvalho', href: profile.linkedin, icon: <Linkedin size={16} /> },
+    { label: 'GitHub', value: 'github.com/kidoexpress', href: profile.github, icon: <Github size={16} /> },
+    { label: 'Email', value: 'joaokido@berkeley.edu', href: profile.email, icon: <Mail size={16} /> },
   ];
 
   return (
@@ -355,23 +662,23 @@ function ContactSection() {
       </div>
 
       <div className="explorer-section-label">Contact</div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 20 }}>
+      <div className="contact-link-grid">
         {links.map((link) => (
           <a
             key={link.label}
             href={link.href}
             target={link.href.startsWith('mailto') ? undefined : '_blank'}
             rel="noopener noreferrer"
-            className="explorer-list-row"
-            style={{ color: 'inherit', textDecoration: 'none' }}
+            className="contact-link-card"
           >
-            <div style={{ width: 32, height: 32, borderRadius: 6, background: link.color, display: 'grid', placeItems: 'center' }}>
-              <ExternalLink size={14} style={{ color: 'white' }} />
+            <div className="contact-link-icon">
+              {link.icon}
             </div>
             <div>
-              <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.82)' }}>{link.label}</div>
-              <div style={{ fontSize: 11.5, color: 'rgba(255,255,255,0.35)', marginTop: 1 }}>{link.value}</div>
+              <div className="contact-link-label">{link.label}</div>
+              <div className="contact-link-value">{link.value}</div>
             </div>
+            <ExternalLink size={13} className="contact-link-arrow" />
           </a>
         ))}
       </div>

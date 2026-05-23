@@ -5,21 +5,21 @@ import { profile } from '../../data/portfolio';
 const LINKS = [
   {
     label: 'Email',
-    value: 'hello@joaokido.com',
+    value: 'joaokido@berkeley.edu',
     href: profile.email,
     icon: <Mail size={16} />,
     desc: 'Best for project proposals and longer conversations.',
   },
   {
     label: 'GitHub',
-    value: 'github.com/joaokido',
+    value: 'github.com/kidoexpress',
     href: profile.github,
     icon: <Github size={16} />,
     desc: 'See what I\'m building.',
   },
   {
     label: 'LinkedIn',
-    value: 'linkedin.com/in/joaokido',
+    value: 'linkedin.com/in/joao-guilherme-kido-carvalho',
     href: profile.linkedin,
     icon: <Linkedin size={16} />,
     desc: 'Professional background and connections.',

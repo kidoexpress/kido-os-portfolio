@@ -3,9 +3,9 @@ import { Mail, Github, Linkedin, ArrowUpRight } from 'lucide-react';
 import { profile } from '../../data/portfolio';
 
 const LINKS = [
-  { label: 'Email', value: 'hello@joaokido.com', href: profile.email, icon: <Mail size={15} />, color: 'rgba(34,211,238,0.15)' },
-  { label: 'GitHub', value: 'github.com/joaokido', href: profile.github, icon: <Github size={15} />, color: 'rgba(255,255,255,0.08)' },
-  { label: 'LinkedIn', value: 'linkedin.com/in/joaokido', href: profile.linkedin, icon: <Linkedin size={15} />, color: 'rgba(59,130,246,0.15)' },
+  { label: 'LinkedIn', value: 'linkedin.com/in/joao-guilherme-kido-carvalho', href: profile.linkedin, icon: <Linkedin size={15} /> },
+  { label: 'GitHub', value: 'github.com/kidoexpress', href: profile.github, icon: <Github size={15} /> },
+  { label: 'Email', value: 'joaokido@berkeley.edu', href: profile.email, icon: <Mail size={15} /> },
 ];
 
 export function ContactApp() {
@@ -35,18 +35,14 @@ export function ContactApp() {
             initial={{ opacity: 0, x: -8 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.08 + i * 0.07, duration: 0.25 }}
-            className="group flex items-center gap-3.5 rounded-xl p-3.5 transition-all duration-150"
-            style={{
-              background: link.color,
-              border: '1px solid rgba(255,255,255,0.08)',
-            }}
+            className="contact-link-card group"
           >
-            <span className="shrink-0 text-white/50 group-hover:text-white transition-colors">{link.icon}</span>
+            <span className="contact-link-icon">{link.icon}</span>
             <div className="flex-1 min-w-0">
-              <p className="text-[0.8rem] font-medium text-white/80 group-hover:text-white transition-colors">{link.label}</p>
-              <p className="font-mono text-[0.62rem] text-white/30 truncate">{link.value}</p>
+              <p className="contact-link-label">{link.label}</p>
+              <p className="contact-link-value truncate">{link.value}</p>
             </div>
-            <ArrowUpRight size={13} className="shrink-0 text-white/20 group-hover:text-white/60 transition-colors" />
+            <ArrowUpRight size={13} className="contact-link-arrow" />
           </motion.a>
         ))}
       </div>
