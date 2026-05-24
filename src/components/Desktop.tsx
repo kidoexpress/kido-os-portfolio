@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, useMotionValue } from 'framer-motion';
 import {
   Mail, Briefcase, Folder,
   Terminal as TerminalIcon, Trash2, Monitor, User, Download,
@@ -20,6 +20,8 @@ import { ChaosApp } from './apps/ChaosApp';
 /* ── Viewport-aware terminal dimensions ───────────────── */
 const TERM_W = Math.min(620, window.innerWidth  - 96);
 const TERM_H = Math.min(410, window.innerHeight - 120);
+const SPOTIFY_W = Math.min(640, window.innerWidth - 96);
+const SPOTIFY_H = Math.min(600, Math.max(460, window.innerHeight - 172));
 
 /* ── Icon drop-shadow helper ──────────────────────────── */
 const shadow = (color: string) =>
@@ -67,13 +69,13 @@ type AppConfig = {
 };
 
 const APPS: AppConfig[] = [
-  { id: 'about',      title: 'About Me',        icon: <User size={13} />,         component: () => <FileExplorer initialSection="home" />,       width: 720, height: 540 },
+  { id: 'about',      title: 'About Me',        icon: <User size={13} />,         component: () => <FileExplorer initialSection="home" />,       width: 800, height: 570 },
   { id: 'terminal',   title: 'Command Prompt',  icon: <TerminalIcon size={13} />, component: Terminal,                                            width: TERM_W, height: TERM_H },
   { id: 'projects',   title: 'Projects',        icon: <Folder size={13} />,       component: () => <FileExplorer initialSection="projects" />,   width: 820, height: 520 },
   { id: 'research',   title: 'Research',        icon: <Folder size={13} />,       component: () => <FileExplorer initialSection="research" />,   width: 720, height: 480 },
   { id: 'experience', title: 'Experience',      icon: <Briefcase size={13} />,    component: () => <FileExplorer initialSection="experience" />, width: 720, height: 520 },
   { id: 'contact',    title: 'Contact',         icon: <Mail size={13} />,         component: () => <FileExplorer initialSection="contact" />,    width: 560, height: 440 },
-  { id: 'spotify',    title: 'Spotify',         icon: <img className="spotify-titlebar-logo" src="/spotify-icon.png" alt="" />, component: SpotifyMiniApp, width: 520, height: 576 },
+  { id: 'spotify',    title: 'Spotify',         icon: <img className="spotify-titlebar-logo" src="/spotify-icon.png" alt="" />, component: SpotifyMiniApp, width: SPOTIFY_W, height: SPOTIFY_H },
   { id: 'downloads',  title: 'Downloads',       icon: <Download size={13} />,     component: () => <FakeSystemApp title="Downloads" subtitle="Recently downloaded lore" lines={['resume_actual_latest.pdf', 'berkeley_deadline_survival_kit.zip', 'tiny_product_ideas.txt', 'worldcup_model_notes.csv']} />, width: 520, height: 380 },
   { id: 'recycle',    title: 'Recycle Bin',     icon: <Trash2 size={13} />,       component: RecycleBinApp,                                       width: 560, height: 400 },
   { id: 'researchLab', title: 'Research Lab',   icon: <FlaskConical size={13} />, component: ResearchLabApp,                                      width: 660, height: 500 },
@@ -93,6 +95,16 @@ type IconDef = {
   initialY: number;
 };
 
+const ICON_W = 96;
+const ICON_H = 96;
+const GRID_X = 108;
+const GRID_Y = 112;
+const GRID_ORIGIN_X = 24;
+const GRID_ORIGIN_Y = 22;
+
+const snapToGrid = (value: number, origin: number, step: number) =>
+  Math.round((value - origin) / step) * step + origin;
+
 function DraggableIcon({
   icon,
   selected,
@@ -105,20 +117,30 @@ function DraggableIcon({
   constraintsRef: React.RefObject<HTMLDivElement | null>;
 }) {
   const hasDragged = useRef(false);
+  const x = useMotionValue(icon.initialX);
+  const y = useMotionValue(icon.initialY);
 
   return (
     <motion.div
       drag
       dragMomentum={false}
-      dragElastic={0}
+      dragElastic={0.04}
       dragConstraints={constraintsRef}
       onDragStart={() => { hasDragged.current = true; }}
-      onDragEnd={() => { setTimeout(() => { hasDragged.current = false; }, 80); }}
+      onDragEnd={() => {
+        const maxX = Math.max(GRID_ORIGIN_X, window.innerWidth - ICON_W - 18);
+        const maxY = Math.max(GRID_ORIGIN_Y, window.innerHeight - ICON_H - 78);
+        x.set(Math.min(maxX, Math.max(GRID_ORIGIN_X, snapToGrid(x.get(), GRID_ORIGIN_X, GRID_X))));
+        y.set(Math.min(maxY, Math.max(GRID_ORIGIN_Y, snapToGrid(y.get(), GRID_ORIGIN_Y, GRID_Y))));
+        setTimeout(() => { hasDragged.current = false; }, 100);
+      }}
       onClick={(e) => { e.stopPropagation(); if (!hasDragged.current) onSelect(icon.id); }}
       onDoubleClick={(e) => { e.stopPropagation(); if (!hasDragged.current) { icon.action(); onSelect(null); } }}
       className={`desktop-icon${selected === icon.id ? ' selected' : ''}`}
-      style={{ left: icon.initialX, top: icon.initialY, zIndex: 10 }}
-      whileTap={{ scale: 0.93 }}
+      style={{ x, y, zIndex: 10 }}
+      whileHover={{ scale: 1.025 }}
+      whileTap={{ scale: 0.94 }}
+      transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
     >
       <div className="desktop-icon-img">{icon.iconEl}</div>
       <span className="desktop-icon-label">{icon.label}</span>
@@ -154,7 +176,7 @@ export function Desktop() {
           const c  = (openCount.current % 6) * 28;
           windowPosMap.current.set(id, {
             x: Math.max(100, Math.round((vw - cfg.width)  / 2) + c),
-            y: Math.max(20,  Math.round((vh - cfg.height) / 2) + c),
+            y: Math.max(20,  Math.round((vh - (cfg.height + 44)) / 2) + c),
           });
           openCount.current++;
         }
@@ -214,38 +236,38 @@ export function Desktop() {
 
   const DESKTOP_ICONS: IconDef[] = [
     {
-      id: 'about', label: 'About Me', initialX: 14, initialY: 14,
+      id: 'about', label: 'About Me', initialX: 24, initialY: 22,
       action: () => openApp('about'),
       iconEl: <User size={42} style={{ color: '#90caf9', filter: shadow('rgba(0,80,200,0.45)') }} />,
     },
     {
-      id: 'projects', label: 'Projects', initialX: 14, initialY: 114,
+      id: 'projects', label: 'Projects', initialX: 24, initialY: 134,
       action: () => openApp('projects'),
       iconEl: <Folder size={42} style={{ color: '#ffb74d', filter: shadow('rgba(200,100,0,0.45)') }} />,
     },
     {
-      id: 'experience', label: 'Experience', initialX: 14, initialY: 214,
+      id: 'experience', label: 'Experience', initialX: 24, initialY: 246,
       action: () => openApp('experience'),
       iconEl: <Briefcase size={42} style={{ color: '#81c784', filter: shadow('rgba(0,120,60,0.4)') }} />,
     },
     {
-      id: 'terminal', label: 'Terminal', initialX: 14, initialY: 314,
+      id: 'terminal', label: 'Terminal', initialX: 24, initialY: 358,
       action: () => openApp('terminal'),
       iconEl: <CmdIcon />,
     },
     {
-      id: 'spotify', label: 'Spotify', initialX: 108, initialY: 14,
+      id: 'spotify', label: 'Spotify', initialX: 132, initialY: 22,
       action: () => openApp('spotify'),
       iconEl: <img className="spotify-desktop-logo" src="/spotify-icon.png" alt="" />,
     },
     {
-      id: 'contact', label: 'Contact', initialX: 14, initialY: 414,
+      id: 'contact', label: 'Contact', initialX: 24, initialY: 470,
       action: () => openApp('contact'),
       iconEl: <Mail size={42} style={{ color: '#64b5f6', filter: shadow('rgba(0,80,200,0.4)') }} />,
     },
     {
-      id: 'recycle', label: 'Recycle Bin', initialX: 14, initialY: 514,
-      action: () => showNotif('Recycle Bin is empty.'),
+      id: 'recycle', label: 'Recycle Bin', initialX: 24, initialY: 582,
+      action: () => openApp('recycle'),
       iconEl: <Trash2 size={42} style={{ color: 'rgba(255,255,255,0.52)', filter: shadow('rgba(0,0,0,0.5)') }} />,
     },
   ];

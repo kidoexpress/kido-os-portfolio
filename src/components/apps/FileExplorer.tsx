@@ -5,9 +5,10 @@ import {
   ExternalLink, Github, Linkedin, ArrowLeft, ChevronRight,
   FileText, Download, MapPin, GraduationCap,
 } from 'lucide-react';
-import { projects, experiences, skills, profile } from '../../data/portfolio';
+import { projects, experiences, skills, profile, coursework, certificates } from '../../data/portfolio';
+import type { CourseStatus } from '../../data/portfolio';
 
-type Section = 'home' | 'projects' | 'research' | 'experience' | 'contact';
+type Section = 'home' | 'projects' | 'research' | 'experience' | 'contact' | 'coursework';
 
 type Props = {
   initialSection?: Section;
@@ -19,6 +20,7 @@ const NAV: { id: Section; label: string; icon: React.ReactNode }[] = [
   { id: 'projects',   label: 'Projects',   icon: <FlaskConical size={14} /> },
   { id: 'research',   label: 'Research',   icon: <BookOpen size={14} /> },
   { id: 'experience', label: 'Experience', icon: <Briefcase size={14} /> },
+  { id: 'coursework', label: 'Coursework', icon: <GraduationCap size={14} /> },
   { id: 'contact',    label: 'Contact',    icon: <Mail size={14} /> },
 ];
 
@@ -85,7 +87,7 @@ export function FileExplorer({ initialSection = 'home' }: Props) {
           </div>
         </div>
 
-        <div className="explorer-main app-scroll">
+        <div className="explorer-main">
           <AnimatePresence mode="wait">
             {section === 'home' && !selectedProject && (
               <HomeSection key="home" onNavigate={setSection} />
@@ -105,6 +107,9 @@ export function FileExplorer({ initialSection = 'home' }: Props) {
             {section === 'contact' && (
               <ContactSection key="contact" />
             )}
+            {section === 'coursework' && (
+              <CourseworkSection key="coursework" />
+            )}
           </AnimatePresence>
         </div>
       </div>
@@ -114,10 +119,10 @@ export function FileExplorer({ initialSection = 'home' }: Props) {
 
 /* ─── Sections ─────────────────────────────────────────────── */
 
-/* ── Home: top-level state (profile ↔ resume viewer) ─── */
+/* ── Home: profile ↔ resume viewer ──────────────────── */
 function HomeSection({ onNavigate }: { onNavigate: (s: Section) => void }) {
-  const [imgErr,      setImgErr]      = useState(false);
-  const [view,        setView]        = useState<'profile' | 'resume'>('profile');
+  const [imgErr, setImgErr] = useState(false);
+  const [view,   setView]   = useState<'profile' | 'resume'>('profile');
 
   return (
     <AnimatePresence mode="wait">
@@ -331,6 +336,198 @@ function ProfileContent({
             </div>
             <div className="explorer-card-name">{item.label}</div>
           </div>
+        ))}
+      </div>
+    </motion.div>
+  );
+}
+
+/* ── Coursework & Certificates full section ──────────── */
+const COURSE_STATUS_STYLE: Record<CourseStatus, { color: string; bg: string; label: string }> = {
+  Completed: { color: 'rgba(255,255,255,0.32)', bg: 'rgba(255,255,255,0.055)', label: 'Done'       },
+  Current:   { color: '#5ca8ff',               bg: 'rgba(0,120,212,0.14)',    label: 'Current'    },
+  Research:  { color: '#a78bfa',               bg: 'rgba(167,139,250,0.12)',  label: 'Research'   },
+  Audited:   { color: 'rgba(255,255,255,0.20)', bg: 'rgba(255,255,255,0.04)', label: 'Audited'    },
+};
+
+/* ── Institution accent colors ───────────────────────── */
+const INST_ACCENT: Record<string, string> = {
+  'UC Berkeley': '#0078d4',
+  'Harvard':     '#a02020',
+};
+
+function CourseworkSection() {
+  const categories = [...new Set(coursework.map((c) => c.category))];
+  const institutions = [...new Set(coursework.map((c) => c.institution))];
+  const completed   = coursework.filter((c) => c.status === 'Completed').length;
+  const current     = coursework.filter((c) => c.status === 'Current').length;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.18 }}
+    >
+      {/* ── Stats bar ──────────────────────────────────── */}
+      <div style={{
+        display: 'flex', gap: 0,
+        marginBottom: 22,
+        background: 'rgba(255,255,255,0.025)',
+        border: '1px solid rgba(255,255,255,0.07)',
+        borderRadius: 9, overflow: 'hidden',
+      }}>
+        {[
+          { label: 'Courses',      value: coursework.length },
+          { label: 'Institutions', value: institutions.length },
+          { label: 'Completed',    value: completed },
+          { label: 'In Progress',  value: current },
+          { label: 'Certificates', value: certificates.length },
+        ].map((stat, i, arr) => (
+          <div key={stat.label} style={{
+            flex: 1, padding: '11px 14px', textAlign: 'center',
+            borderRight: i < arr.length - 1 ? '1px solid rgba(255,255,255,0.055)' : 'none',
+          }}>
+            <div style={{ fontSize: 18, fontWeight: 500, color: 'rgba(255,255,255,0.85)', lineHeight: 1, marginBottom: 4 }}>
+              {stat.value}
+            </div>
+            <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'rgba(255,255,255,0.28)' }}>
+              {stat.label}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* ── Courses grouped by category ─────────────────── */}
+      {categories.map((cat, ci) => {
+        const rows = coursework.filter((c) => c.category === cat);
+        return (
+          <div key={cat} style={{ marginBottom: 24 }}>
+            {/* Category header */}
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10,
+            }}>
+              <span style={{
+                fontSize: 10, fontWeight: 700, textTransform: 'uppercase',
+                letterSpacing: '0.12em', color: 'rgba(255,255,255,0.35)',
+              }}>
+                {cat}
+              </span>
+              <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.18)' }}>
+                {rows.length} {rows.length === 1 ? 'course' : 'courses'}
+              </span>
+              <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.06)' }} />
+            </div>
+
+            {/* 2-col card grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+              {rows.map((course, i) => {
+                const s    = COURSE_STATUS_STYLE[course.status];
+                const accent = INST_ACCENT[course.institution] ?? '#0078d4';
+                return (
+                  <motion.div
+                    key={course.id}
+                    className="cw-card"
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: (ci * 4 + i) * 0.035, duration: 0.18 }}
+                  >
+                    {/* Top: code + status */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                      <span style={{
+                        fontSize: 10.5, fontWeight: 600, letterSpacing: '0.04em',
+                        color: accent, opacity: 0.9,
+                        fontVariantNumeric: 'tabular-nums',
+                      }}>
+                        {course.code ?? course.institution}
+                      </span>
+                      <span className="cw-pill" style={{ color: s.color, background: s.bg }}>
+                        {s.label}
+                      </span>
+                    </div>
+
+                    {/* Course name */}
+                    <div style={{
+                      fontSize: 13.5, fontWeight: 500, color: 'rgba(255,255,255,0.88)',
+                      lineHeight: 1.35, marginBottom: 7,
+                    }}>
+                      {course.name}
+                    </div>
+
+                    {/* Institution + description */}
+                    <div>
+                      <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.32)', marginBottom: course.description ? 4 : 0 }}>
+                        {course.institution}
+                      </div>
+                      {course.description && (
+                        <div style={{ fontSize: 11.5, color: 'rgba(255,255,255,0.22)', lineHeight: 1.55 }}>
+                          {course.description}
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
+
+      {/* ── Certificates & Programs ─────────────────────── */}
+      <div style={{ height: 1, background: 'rgba(255,255,255,0.055)', marginBottom: 20 }} />
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+        <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'rgba(255,255,255,0.35)' }}>
+          Certificates &amp; Programs
+        </span>
+        <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.18)' }}>
+          {certificates.length} credentials
+        </span>
+        <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.06)' }} />
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, paddingBottom: 8 }}>
+        {certificates.map((cert, i) => (
+          <motion.div
+            key={cert.id}
+            className="cw-card"
+            initial={{ opacity: 0, y: 5 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.05, duration: 0.18 }}
+            style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: 12 }}
+          >
+            {/* Top */}
+            <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+              <div style={{
+                width: 32, height: 32, borderRadius: 7, flexShrink: 0,
+                background: 'rgba(74,222,128,0.08)',
+                border: '1px solid rgba(74,222,128,0.18)',
+                display: 'grid', placeItems: 'center',
+              }}>
+                <FileText size={14} style={{ color: 'rgba(74,222,128,0.75)' }} />
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 13, fontWeight: 500, color: 'rgba(255,255,255,0.85)', lineHeight: 1.35, marginBottom: 4 }}>
+                  {cert.title}
+                </div>
+                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.32)' }}>{cert.org}</div>
+                <div style={{ fontSize: 10.5, color: 'rgba(255,255,255,0.20)', marginTop: 2 }}>{cert.date}</div>
+              </div>
+            </div>
+
+            {/* Bottom: badge or link */}
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              {cert.link ? (
+                <a href={cert.link} target="_blank" rel="noopener noreferrer" className="win-btn" style={{ fontSize: 11.5, gap: 4 }}>
+                  <ExternalLink size={11} /> View
+                </a>
+              ) : (
+                <span className="cw-pill" style={{ color: 'rgba(74,222,128,0.85)', background: 'rgba(74,222,128,0.09)' }}>
+                  Certified
+                </span>
+              )}
+            </div>
+          </motion.div>
         ))}
       </div>
     </motion.div>

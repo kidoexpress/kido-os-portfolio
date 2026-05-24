@@ -127,18 +127,37 @@ const BOOT_BANNER: Line[] = [
 type Props = { onOpenApp?: (app: string) => void };
 
 export function Terminal({ onOpenApp }: Props) {
-  const [history, setHistory] = useState<Line[]>(BOOT_BANNER);
+  const [history, setHistory] = useState<Line[]>([]);
   const [input, setInput]     = useState('');
   const [cmdHist, setCmdHist] = useState<string[]>([]);
   const [cmdIdx, setCmdIdx]   = useState(-1);
   const inputRef  = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const bootCancelled = useRef(false);
+
+  useEffect(() => {
+    let index = 0;
+    const timers: number[] = [];
+
+    const tick = () => {
+      if (bootCancelled.current) return;
+      setHistory(BOOT_BANNER.slice(0, index + 1));
+      index += 1;
+      if (index < BOOT_BANNER.length) {
+        timers.push(window.setTimeout(tick, index < 5 ? 95 : 38));
+      }
+    };
+
+    timers.push(window.setTimeout(tick, 120));
+    return () => timers.forEach(window.clearTimeout);
+  }, []);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
   }, [history]);
 
   const run = (cmd: string) => {
+    bootCancelled.current = true;
     const trimmed = cmd.trim();
     const [verb]  = trimmed.split(/\s+/);
     const lower = trimmed.toLowerCase();

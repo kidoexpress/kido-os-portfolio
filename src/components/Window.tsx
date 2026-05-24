@@ -70,16 +70,16 @@ export function Window({
     <AnimatePresence>
       {!minimized && (
         <motion.div
-          initial={{ opacity: 0, scale: 0.96, y: 12 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.97, y: 6, transition: { duration: 0.14 } }}
-          transition={{ duration: 0.22, ease: [0.34, 1.1, 0.64, 1] }}
+          initial={{ opacity: 0, scale: 0.94, y: 18, filter: 'blur(8px)' }}
+          animate={{ opacity: 1, scale: 1, y: 0, filter: 'blur(0px)' }}
+          exit={{ opacity: 0, scale: 0.97, y: 10, filter: 'blur(4px)', transition: { duration: 0.16 } }}
+          transition={{ duration: 0.34, ease: [0.16, 1, 0.3, 1] }}
           onPointerDown={onFocus}
           className={`win-window${maximized ? ' maximized' : ''}${focused ? ' focused' : ' inactive'}`}
           data-app-id={id}
           style={
             maximized
-              ? { position: 'absolute', inset: 0, width: '100%', height: '100%', zIndex, borderRadius: 0 }
+              ? { position: 'absolute', left: 0, top: 0, right: 0, bottom: 58, width: '100%', height: 'auto', zIndex, borderRadius: 0 }
               : { left: pos.x, top: pos.y, width, height: height + 44, zIndex }
           }
         >

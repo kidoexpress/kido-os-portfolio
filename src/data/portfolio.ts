@@ -182,3 +182,85 @@ export const experiences: Experience[] = [
     tags: ['CS', 'Research', 'Policy', 'Education'],
   },
 ];
+
+/* ── Coursework & Certificates ──────────────────────────────── */
+
+export type CourseStatus = 'Completed' | 'Current' | 'Research' | 'Audited';
+
+export type Course = {
+  id: string;
+  code?: string;
+  name: string;
+  institution: string;
+  category: string;
+  status: CourseStatus;
+  description?: string;
+};
+
+export type Certificate = {
+  id: string;
+  title: string;
+  org: string;
+  date: string;
+  link?: string;
+};
+
+export const coursework: Course[] = [
+  /* ── UC Berkeley ──────────────────────────────────── */
+  {
+    id: 'cs61a', code: 'CS 61A',
+    name: 'Structure & Interpretation of Computer Programs',
+    institution: 'UC Berkeley', category: 'CS Core', status: 'Completed',
+    description: 'Functional, procedural, and OOP paradigms; recursion, abstraction, interpreters',
+  },
+  {
+    id: 'cs61b', code: 'CS 61B',
+    name: 'Data Structures',
+    institution: 'UC Berkeley', category: 'CS Core', status: 'Completed',
+    description: 'Algorithms, data structures, and object-oriented design in Java',
+  },
+  {
+    id: 'cs61c', code: 'CS 61C',
+    name: 'Machine Structures',
+    institution: 'UC Berkeley', category: 'CS Core', status: 'Completed',
+    description: 'C programming, RISC-V assembly, computer organization and architecture',
+  },
+  {
+    id: 'math51', code: 'MATH 51',
+    name: 'Linear Algebra & Differential Calculus',
+    institution: 'UC Berkeley', category: 'Mathematics', status: 'Completed',
+    description: 'Vectors, matrices, linear transformations, multivariable derivatives',
+  },
+  {
+    id: 'math52', code: 'MATH 52',
+    name: 'Integral Calculus of Several Variables',
+    institution: 'UC Berkeley', category: 'Mathematics', status: 'Completed',
+    description: 'Double and triple integrals, line integrals, Green\'s theorem',
+  },
+  {
+    id: 'math53', code: 'MATH 53',
+    name: 'Multivariable Calculus',
+    institution: 'UC Berkeley', category: 'Mathematics', status: 'Current',
+    description: 'Gradient, divergence, curl, Stokes\' and divergence theorems',
+  },
+  {
+    id: 'econ1', code: 'ECON 1',
+    name: 'Principles of Economics',
+    institution: 'UC Berkeley', category: 'Economics', status: 'Completed',
+    description: 'Micro and macroeconomic foundations, markets, fiscal and monetary policy',
+  },
+  /* ── Harvard ──────────────────────────────────────── */
+  {
+    id: 'cs50', code: 'CS50',
+    name: 'Introduction to Computer Science',
+    institution: 'Harvard', category: 'CS Core', status: 'Completed',
+    description: 'C, Python, SQL, HTML/CSS/JS — Harvard\'s foundational CS breadth course',
+  },
+];
+
+export const certificates: Certificate[] = [
+  { id: 'google-da',  title: 'Google Data Analytics',        org: 'Google',      date: '2024' },
+  { id: 'bloomberg',  title: 'Bloomberg Market Concepts',    org: 'Bloomberg',   date: '2024' },
+  { id: 'berkeley-r', title: 'Berkeley Research Program',    org: 'UC Berkeley', date: '2024–2025' },
+  { id: 'aiml',       title: 'AI / ML Certification',        org: 'Coursera',    date: '2024' },
+];
