@@ -311,37 +311,39 @@ export function Desktop() {
         />
       ))}
 
-      {APPS.map((cfg) => {
-        if (!openApps.has(cfg.id)) return null;
-        const zIndex    = 20 + focusOrder.indexOf(cfg.id);
-        const isFocused = focusedApp === cfg.id;
-        const pos       = windowPosMap.current.get(cfg.id) ?? { x: 100, y: 60 };
-        const AppComp   = cfg.component;
-        return (
-          <Window
-            key={cfg.id}
-            id={cfg.id}
-            title={cfg.title}
-            icon={cfg.icon}
-            zIndex={zIndex}
-            initialX={pos.x}
-            initialY={pos.y}
-            width={cfg.width}
-            height={cfg.height}
-            minimized={minimized.has(cfg.id)}
-            focused={isFocused}
-            onClose={() => closeApp(cfg.id)}
-            onMinimize={() => toggleMinimize(cfg.id)}
-            onFocus={() => focusApp(cfg.id)}
-            constraintsRef={constraintsRef}
-          >
-            <AppComp
-              onOpenApp={(id) => openApp(id as WinAppId)}
-              onChaos={triggerChaos}
-            />
-          </Window>
-        );
-      })}
+      {/* AnimatePresence at this level so exit animations play when a window is closed */}
+      <AnimatePresence>
+        {APPS.filter((cfg) => openApps.has(cfg.id)).map((cfg) => {
+          const zIndex    = 20 + focusOrder.indexOf(cfg.id);
+          const isFocused = focusedApp === cfg.id;
+          const pos       = windowPosMap.current.get(cfg.id) ?? { x: 100, y: 60 };
+          const AppComp   = cfg.component;
+          return (
+            <Window
+              key={cfg.id}
+              id={cfg.id}
+              title={cfg.title}
+              icon={cfg.icon}
+              zIndex={zIndex}
+              initialX={pos.x}
+              initialY={pos.y}
+              width={cfg.width}
+              height={cfg.height}
+              minimized={minimized.has(cfg.id)}
+              focused={isFocused}
+              onClose={() => closeApp(cfg.id)}
+              onMinimize={() => toggleMinimize(cfg.id)}
+              onFocus={() => focusApp(cfg.id)}
+              constraintsRef={constraintsRef}
+            >
+              <AppComp
+                onOpenApp={(id) => openApp(id as WinAppId)}
+                onChaos={triggerChaos}
+              />
+            </Window>
+          );
+        })}
+      </AnimatePresence>
 
       <AnimatePresence>
         {notification && (

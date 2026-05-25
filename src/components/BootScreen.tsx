@@ -17,7 +17,7 @@ type BL = { text: string; type: LT; gap: number };
 const SEQ: BL[] = [
   { text: '[ OK ]  Mounting /dev/portfolio',        type: 'ok',    gap: 0   },
   { text: '[ OK ]  Syncing project metadata',       type: 'ok',    gap: 210 },
-  { text: '[ OK ]  Calibrating curiosity',          type: 'ok',    gap: 210 },
+  { text: '[ OK ]  Loading caffeine reserves',       type: 'ok',    gap: 210 },
   { text: '[ OK ]  Launching desktop environment',  type: 'ok',    gap: 220 },
   { text: '',                                        type: 'blank', gap: 110 },
   { text: 'boot@kido:~$ starting session...',       type: 'cmd',   gap: 90  },

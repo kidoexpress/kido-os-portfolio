@@ -109,18 +109,31 @@ const getNeofetch = (): Line[] => {
 /* ── Boot banner ────────────────────────────────────── */
 const BOOT_BANNER: Line[] = [
   L('blank',   ''),
-  L('success', `  hi, I'm João Guilherme Kido Carvalho`),
+  L('success', '  Welcome to my interactive portfolio.'),
   L('blank',   ''),
-  L('dim',     `  type 'help' to see available commands.`),
+  L('dim',     "  type 'help' to see available commands."),
   L('blank',   ''),
   L('heading', '  ABOUT ME'),
   L('blank',   ''),
-  L('output',  '  CS student and builder working across AI, product,'),
-  L('output',  '  simulations, education, and social impact.'),
+  L("output",  "  I'm a CS & Economics student at UC Berkeley currently"),
+  L('output',  '  working with AI implementation, automation systems, and'),
+  L('output',  '  financial technology infrastructure in the banking industry.'),
   L('blank',   ''),
-  L('output',  '  I build tools that make complex systems easier to understand.'),
+  L('output',  '  I enjoy building software across AI, simulations, data'),
+  L('output',  '  visualization, and systems design.'),
   L('blank',   ''),
 ];
+
+/* Per-type animation delays for cinematic pacing */
+const BOOT_DELAY: Record<Line['type'], number> = {
+  blank:   16,
+  success: 60,
+  dim:     34,
+  heading: 72,
+  output:  24,
+  error:   24,
+  prompt:  24,
+};
 
 /* ── Component ──────────────────────────────────────── */
 
@@ -141,14 +154,15 @@ export function Terminal({ onOpenApp }: Props) {
 
     const tick = () => {
       if (bootCancelled.current) return;
+      const line = BOOT_BANNER[index];
       setHistory(BOOT_BANNER.slice(0, index + 1));
       index += 1;
       if (index < BOOT_BANNER.length) {
-        timers.push(window.setTimeout(tick, index < 5 ? 95 : 38));
+        timers.push(window.setTimeout(tick, BOOT_DELAY[line.type]));
       }
     };
 
-    timers.push(window.setTimeout(tick, 120));
+    timers.push(window.setTimeout(tick, 180));
     return () => timers.forEach(window.clearTimeout);
   }, []);
 

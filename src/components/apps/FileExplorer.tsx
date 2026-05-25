@@ -4,11 +4,12 @@ import {
   Home, Folder, BookOpen, Briefcase, Mail, FlaskConical,
   ExternalLink, Github, Linkedin, ArrowLeft, ChevronRight,
   FileText, Download, MapPin, GraduationCap,
+  Code2, Monitor, Server, Cpu, BarChart2, Wrench,
 } from 'lucide-react';
 import { projects, experiences, skills, profile, coursework, certificates } from '../../data/portfolio';
 import type { CourseStatus } from '../../data/portfolio';
 
-type Section = 'home' | 'projects' | 'research' | 'experience' | 'contact' | 'coursework';
+type Section = 'home' | 'projects' | 'research' | 'experience' | 'contact' | 'coursework' | 'skills';
 
 type Props = {
   initialSection?: Section;
@@ -20,6 +21,7 @@ const NAV: { id: Section; label: string; icon: React.ReactNode }[] = [
   { id: 'projects',   label: 'Projects',   icon: <FlaskConical size={14} /> },
   { id: 'research',   label: 'Research',   icon: <BookOpen size={14} /> },
   { id: 'experience', label: 'Experience', icon: <Briefcase size={14} /> },
+  { id: 'skills',     label: 'Skills',     icon: <Code2 size={14} /> },
   { id: 'coursework', label: 'Coursework', icon: <GraduationCap size={14} /> },
   { id: 'contact',    label: 'Contact',    icon: <Mail size={14} /> },
 ];
@@ -106,6 +108,9 @@ export function FileExplorer({ initialSection = 'home' }: Props) {
             )}
             {section === 'contact' && (
               <ContactSection key="contact" />
+            )}
+            {section === 'skills' && (
+              <SkillsSection key="skills" />
             )}
             {section === 'coursework' && (
               <CourseworkSection key="coursework" />
@@ -342,6 +347,174 @@ function ProfileContent({
   );
 }
 
+/* ── Skills section ──────────────────────────────────── */
+const GROUP_META: Record<string, { color: string; icon: React.ReactNode }> = {
+  Languages: { color: '#60a5fa', icon: <Code2 size={12} />    },
+  Frontend:  { color: '#34d399', icon: <Monitor size={12} />  },
+  Backend:   { color: '#fb923c', icon: <Server size={12} />   },
+  'AI / ML': { color: '#c084fc', icon: <Cpu size={12} />      },
+  Data:      { color: '#fbbf24', icon: <BarChart2 size={12} /> },
+  Tools:     { color: '#94a3b8', icon: <Wrench size={12} />   },
+};
+
+/* Stagger variants — defined outside component for referential stability */
+const GRID_V = {
+  hidden: {},
+  show:   { transition: { staggerChildren: 0.07, delayChildren: 0.06 } },
+};
+
+const CARD_V = {
+  hidden: { opacity: 0, y: 10 },
+  show:   { opacity: 1, y: 0, transition: { duration: 0.28, ease: [0.16, 1, 0.3, 1] as const } },
+};
+
+const CHIPS_V = {
+  hidden: {},
+  show:   { transition: { staggerChildren: 0.011, delayChildren: 0.07 } },
+};
+
+const CHIP_V = {
+  hidden: { opacity: 0 },
+  show:   { opacity: 1, transition: { duration: 0.13 } },
+};
+
+function SkillsSection() {
+  const groups = Object.entries(skills);
+  const total  = groups.reduce((n, [, items]) => n + items.length, 0);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.18 }}
+    >
+      {/* ── Stats bar ──────────────────────────────────── */}
+      <motion.div
+        initial={{ opacity: 0, y: -4 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.22, delay: 0.03 }}
+        style={{
+          display: 'flex', gap: 0, marginBottom: 24,
+          background: 'rgba(255,255,255,0.025)',
+          border: '1px solid rgba(255,255,255,0.07)',
+          borderRadius: 9, overflow: 'hidden',
+        }}
+      >
+        {[
+          { label: 'Total Skills', value: total },
+          { label: 'Categories',   value: groups.length },
+          { label: 'Languages',    value: skills.Languages.length },
+          { label: 'AI / ML',      value: skills['AI / ML'].length },
+          { label: 'Tools',        value: skills.Tools.length },
+        ].map((stat, i, arr) => (
+          <div key={stat.label} style={{
+            flex: 1, padding: '11px 14px', textAlign: 'center',
+            borderRight: i < arr.length - 1 ? '1px solid rgba(255,255,255,0.055)' : 'none',
+          }}>
+            <div style={{ fontSize: 18, fontWeight: 500, color: 'rgba(255,255,255,0.85)', lineHeight: 1, marginBottom: 4 }}>
+              {stat.value}
+            </div>
+            <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'rgba(255,255,255,0.28)' }}>
+              {stat.label}
+            </div>
+          </div>
+        ))}
+      </motion.div>
+
+      {/* ── 2-col group grid (staggered) ───────────────── */}
+      <motion.div
+        variants={GRID_V}
+        initial="hidden"
+        animate="show"
+        style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}
+      >
+        {groups.map(([group, items]) => {
+          const meta = GROUP_META[group] ?? { color: '#0078d4', icon: <Code2 size={12} /> };
+          return (
+            <motion.div
+              key={group}
+              variants={CARD_V}
+              whileHover={{ y: -2, transition: { duration: 0.16, ease: 'easeOut' } }}
+              className="sk-group-card"
+            >
+              {/* Group header */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 13 }}>
+                <div style={{
+                  width: 26, height: 26, borderRadius: 7, flexShrink: 0,
+                  background: `${meta.color}14`,
+                  border: `1px solid ${meta.color}26`,
+                  display: 'grid', placeItems: 'center',
+                  color: meta.color,
+                }}>
+                  {meta.icon}
+                </div>
+                <span style={{
+                  fontFamily: '"JetBrains Mono", "Cascadia Code", monospace',
+                  fontSize: 10, fontWeight: 600,
+                  textTransform: 'uppercase', letterSpacing: '0.10em',
+                  color: meta.color,
+                }}>
+                  {group}
+                </span>
+                <span style={{
+                  marginLeft: 'auto',
+                  fontFamily: '"JetBrains Mono", monospace',
+                  fontSize: 9.5, color: 'rgba(255,255,255,0.18)',
+                  letterSpacing: '0.02em',
+                }}>
+                  {items.length}
+                </span>
+              </div>
+
+              {/* Hairline */}
+              <div style={{ height: 1, background: 'rgba(255,255,255,0.05)', marginBottom: 13 }} />
+
+              {/* Skill chips — staggered */}
+              <motion.div
+                variants={CHIPS_V}
+                style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}
+              >
+                {items.map((skill) => (
+                  <motion.span
+                    key={skill}
+                    variants={CHIP_V}
+                    className="sk-chip"
+                    whileHover={{ y: -1, scale: 1.03, transition: { duration: 0.13, ease: 'easeOut' } }}
+                  >
+                    {skill}
+                  </motion.span>
+                ))}
+              </motion.div>
+            </motion.div>
+          );
+        })}
+      </motion.div>
+
+      {/* ── Footnote ───────────────────────────────────── */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.4, delay: 0.65 }}
+        style={{
+          marginTop: 30, paddingTop: 16,
+          borderTop: '1px solid rgba(255,255,255,0.042)',
+          textAlign: 'center',
+        }}
+      >
+        <span style={{
+          fontSize: 10.5,
+          color: 'rgba(255,255,255,0.16)',
+          fontFamily: '"JetBrains Mono", "Cascadia Code", monospace',
+          letterSpacing: '0.03em',
+        }}>
+          this site was built with typescript + css — if you're curious ;)
+        </span>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 /* ── Coursework & Certificates full section ──────────── */
 const COURSE_STATUS_STYLE: Record<CourseStatus, { color: string; bg: string; label: string }> = {
   Completed: { color: 'rgba(255,255,255,0.32)', bg: 'rgba(255,255,255,0.055)', label: 'Done'       },
@@ -352,8 +525,10 @@ const COURSE_STATUS_STYLE: Record<CourseStatus, { color: string; bg: string; lab
 
 /* ── Institution accent colors ───────────────────────── */
 const INST_ACCENT: Record<string, string> = {
-  'UC Berkeley': '#0078d4',
-  'Harvard':     '#a02020',
+  'UC Berkeley':              '#0078d4',
+  'Harvard':                  '#a02020',
+  'University of Pittsburgh': '#e8a800',   /* Pitt gold */
+  'Stanford University':      '#8c1515',   /* Stanford cardinal */
 };
 
 function CourseworkSection() {
@@ -400,43 +575,74 @@ function CourseworkSection() {
 
       {/* ── Courses grouped by category ─────────────────── */}
       {categories.map((cat, ci) => {
-        const rows = coursework.filter((c) => c.category === cat);
+        const rows       = coursework.filter((c) => c.category === cat);
+        const single     = rows.length === 1;
+        const isExternal = cat === 'External Programs';
+
         return (
-          <div key={cat} style={{ marginBottom: 24 }}>
-            {/* Category header */}
-            <div style={{
-              display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10,
-            }}>
+          <div key={cat} style={{ marginBottom: 30 }}>
+            {/* Category header — dot + label + count + optional ext pill + hairline */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 13 }}>
               <span style={{
-                fontSize: 10, fontWeight: 700, textTransform: 'uppercase',
-                letterSpacing: '0.12em', color: 'rgba(255,255,255,0.35)',
+                width: 4, height: 4, borderRadius: '50%', flexShrink: 0,
+                background: isExternal ? '#f59e0b' : 'rgba(255,255,255,0.22)',
+              }} />
+              <span style={{
+                fontSize: 10.5, fontWeight: 600, textTransform: 'uppercase',
+                letterSpacing: '0.13em',
+                color: isExternal ? 'rgba(251,191,36,0.55)' : 'rgba(255,255,255,0.38)',
               }}>
                 {cat}
               </span>
-              <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.18)' }}>
+              {isExternal && (
+                <span style={{
+                  fontSize: 8.5, fontWeight: 700, letterSpacing: '0.09em',
+                  textTransform: 'uppercase',
+                  color: 'rgba(245,158,11,0.65)',
+                  background: 'rgba(245,158,11,0.08)',
+                  border: '1px solid rgba(245,158,11,0.18)',
+                  borderRadius: 999, padding: '1.5px 6px',
+                }}>
+                  ext
+                </span>
+              )}
+              <span style={{
+                fontSize: 10, color: 'rgba(255,255,255,0.16)',
+                fontWeight: 400, letterSpacing: 0, textTransform: 'none',
+              }}>
                 {rows.length} {rows.length === 1 ? 'course' : 'courses'}
               </span>
-              <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.06)' }} />
+              <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.052)' }} />
             </div>
 
-            {/* 2-col card grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+            {/* Grid: 1-col for single courses, 2-col for multiple */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: single ? '1fr' : '1fr 1fr',
+              gap: 9,
+            }}>
               {rows.map((course, i) => {
-                const s    = COURSE_STATUS_STYLE[course.status];
+                const s      = COURSE_STATUS_STYLE[course.status];
                 const accent = INST_ACCENT[course.institution] ?? '#0078d4';
+
                 return (
                   <motion.div
                     key={course.id}
-                    className="cw-card"
+                    className={`cw-card${course.external ? ' cw-card--ext' : ''}`}
                     initial={{ opacity: 0, y: 5 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: (ci * 4 + i) * 0.035, duration: 0.18 }}
+                    transition={{ delay: (ci * 4 + i) * 0.03, duration: 0.18 }}
+                    whileHover={{ y: -2, transition: { duration: 0.15, ease: 'easeOut' } }}
                   >
-                    {/* Top: code + status */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                    {/* Top: code badge + status pill */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
                       <span style={{
-                        fontSize: 10.5, fontWeight: 600, letterSpacing: '0.04em',
-                        color: accent, opacity: 0.9,
+                        display: 'inline-flex', alignItems: 'center',
+                        fontSize: 10, fontWeight: 700, letterSpacing: '0.05em',
+                        color: accent,
+                        background: `${accent}18`,
+                        border: `1px solid ${accent}28`,
+                        padding: '2px 8px', borderRadius: 4,
                         fontVariantNumeric: 'tabular-nums',
                       }}>
                         {course.code ?? course.institution}
@@ -448,23 +654,39 @@ function CourseworkSection() {
 
                     {/* Course name */}
                     <div style={{
-                      fontSize: 13.5, fontWeight: 500, color: 'rgba(255,255,255,0.88)',
-                      lineHeight: 1.35, marginBottom: 7,
+                      fontSize: 13.5, fontWeight: 500,
+                      color: 'rgba(255,255,255,0.88)',
+                      lineHeight: 1.35, marginBottom: 8,
                     }}>
                       {course.name}
                     </div>
 
                     {/* Institution + description */}
                     <div>
-                      <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.32)', marginBottom: course.description ? 4 : 0 }}>
+                      <div style={{
+                        fontSize: 11, color: 'rgba(255,255,255,0.30)',
+                        marginBottom: course.description ? 5 : 0,
+                      }}>
                         {course.institution}
                       </div>
                       {course.description && (
-                        <div style={{ fontSize: 11.5, color: 'rgba(255,255,255,0.22)', lineHeight: 1.55 }}>
+                        <div style={{
+                          fontSize: 11.5, color: 'rgba(255,255,255,0.22)',
+                          lineHeight: 1.6,
+                        }}>
                           {course.description}
                         </div>
                       )}
                     </div>
+
+                    {/* Tags — revealed on hover via CSS */}
+                    {course.tags && course.tags.length > 0 && (
+                      <div className="cw-tags">
+                        {course.tags.map((tag) => (
+                          <span key={tag} className="cw-tag">{tag}</span>
+                        ))}
+                      </div>
+                    )}
                   </motion.div>
                 );
               })}

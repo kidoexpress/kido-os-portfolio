@@ -813,7 +813,8 @@ a { color: inherit; text-decoration: none; }
   flex-direction: column;
   backdrop-filter: saturate(145%) blur(34px);
   -webkit-backdrop-filter: saturate(145%) blur(34px);
-  transition: box-shadow 220ms ease, opacity 180ms ease, border-color 180ms ease, transform 180ms ease;
+  /* opacity + transform are owned by Framer Motion — keep only shadow/border here */
+  transition: box-shadow 220ms ease, border-color 180ms ease;
   will-change: transform, opacity;
 }
 
@@ -827,10 +828,7 @@ a { color: inherit; text-decoration: none; }
     inset 0 1px 0 rgba(255,255,255,0.085);
 }
 
-.win-window.inactive {
-  opacity: 0.74;
-  transform: translateY(1px);
-}
+/* .win-window.inactive opacity + transform handled by Framer Motion animate prop */
 .win-window.inactive .win-titlebar-title {
   color: rgba(255,255,255,0.35);
 }
@@ -1051,16 +1049,51 @@ a { color: inherit; text-decoration: none; }
 }
 
 .cw-card {
-  padding: 13px 14px;
+  padding: 15px 16px;
   background: rgba(255,255,255,0.025);
   border: 1px solid rgba(255,255,255,0.07);
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: default;
   transition: background 0.15s ease, border-color 0.16s ease;
 }
 .cw-card:hover {
   background: rgba(255,255,255,0.048);
   border-color: rgba(255,255,255,0.12);
+}
+
+/* External card — subtle warm amber tint */
+.cw-card--ext {
+  background: rgba(245,158,11,0.022);
+  border-color: rgba(245,158,11,0.10);
+}
+.cw-card--ext:hover {
+  background: rgba(245,158,11,0.038);
+  border-color: rgba(245,158,11,0.18);
+}
+
+/* Tag hover-reveal */
+.cw-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 9px;
+  opacity: 0;
+  transform: translateY(3px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+.cw-card:hover .cw-tags {
+  opacity: 1;
+  transform: translateY(0);
+}
+.cw-tag {
+  font-size: 9.5px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.055);
+  border: 1px solid rgba(255,255,255,0.09);
+  color: rgba(255,255,255,0.38);
+  white-space: nowrap;
+  letter-spacing: 0.02em;
 }
 
 .cw-row {
@@ -1082,11 +1115,50 @@ a { color: inherit; text-decoration: none; }
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  padding: 2px 5px;
-  border-radius: 3px;
+  padding: 2.5px 7px;
+  border-radius: 4px;
   white-space: nowrap;
   flex-shrink: 0;
   line-height: 1.5;
+}
+
+/* ── Skills section ─────────────────────────────────── */
+.sk-group-card {
+  padding: 18px 16px;
+  background: rgba(255,255,255,0.022);
+  border: 1px solid rgba(255,255,255,0.068);
+  border-radius: 12px;
+  will-change: transform;
+  transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.20s ease;
+}
+.sk-group-card:hover {
+  background: rgba(255,255,255,0.038);
+  border-color: rgba(255,255,255,0.12);
+  box-shadow: 0 10px 28px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.10);
+}
+
+.sk-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  font-size: 11.5px;
+  font-weight: 400;
+  color: rgba(255,255,255,0.48);
+  background: rgba(255,255,255,0.042);
+  border: 1px solid rgba(255,255,255,0.078);
+  border-radius: 6px;
+  cursor: default;
+  user-select: none;
+  white-space: nowrap;
+  line-height: 1.45;
+  will-change: transform;
+  transition: color 0.13s ease, background 0.13s ease, border-color 0.13s ease, box-shadow 0.13s ease;
+}
+.sk-chip:hover {
+  color: rgba(255,255,255,0.90);
+  background: rgba(255,255,255,0.082);
+  border-color: rgba(255,255,255,0.17);
+  box-shadow: 0 3px 12px rgba(0,0,0,0.20), inset 0 1px 0 rgba(255,255,255,0.07);
 }
 
 /* ── About Me: panel components ─────────────────────── */
@@ -1372,17 +1444,18 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ── Terminal color hierarchy ── */
-.terminal-prompt  { color: #cccccc; }
-.terminal-path    { color: #cccccc; }
-.terminal-output  { color: #cccccc; }
-.terminal-error   { color: #bdbdbd; }
-.terminal-dim     { color: #9a9a9a; }
-.terminal-success { color: #ffffff; }
+.terminal-prompt  { color: #c8c8c8; }
+.terminal-path    { color: #c8c8c8; }
+.terminal-output  { color: #c2c2c2; }
+.terminal-error   { color: #f08080; }
+.terminal-dim     { color: #6e6e6e; }
+.terminal-success { color: #e8e8e8; letter-spacing: 0.01em; }
 .terminal-heading {
-  color: rgba(255,255,255,0.88);
-  letter-spacing: 0.06em;
-  font-size: 11px;
-  font-weight: 500;
+  color: rgba(255,255,255,0.55);
+  letter-spacing: 0.12em;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
 }
 
 /* ── Terminal window overrides ── */
@@ -1881,17 +1954,25 @@ a { color: inherit; text-decoration: none; }
   background: linear-gradient(90deg, rgba(30,215,96,0.72) 58%, rgba(255,255,255,0.14) 58%);
 }
 
-/* Spotify simplified pass: closer to the earlier compact widget, without fake tracks/player. */
+/* Spotify layout override (simplified widget) */
 .spotify-shell {
-  grid-template-columns: 150px minmax(0, 1fr);
+  grid-template-columns: 154px minmax(0, 1fr);
   grid-template-rows: minmax(0, 1fr);
 }
 .spotify-sidebar {
   grid-row: 1;
+  gap: 10px;
+  padding: 16px 10px 12px;
 }
 .spotify-main {
   overflow-y: auto;
-  padding: 20px;
+  overflow-x: hidden;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.022), transparent 18%),
+    #121212;
 }
 .spotify-content-simple {
   min-height: 100%;
@@ -1988,6 +2069,217 @@ a { color: inherit; text-decoration: none; }
   color: rgba(255,255,255,0.36);
   font-size: 11.5px;
   padding: 2px 2px 0;
+}
+
+/* ── Spotify rewrite: sp-* component classes ─────── */
+
+/* Equalizer bars */
+@keyframes eq-dance {
+  0%, 100% { height: 3px;  }
+  50%       { height: 11px; }
+}
+.sp-eq {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 12px;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+.sp-eq span {
+  width: 2px;
+  min-height: 3px;
+  border-radius: 1px;
+  animation: eq-dance 0.8s ease-in-out infinite;
+}
+.sp-eq span:nth-child(1) { animation-duration: 0.75s; }
+.sp-eq span:nth-child(2) { animation-duration: 0.90s; animation-delay: 0.14s; }
+.sp-eq span:nth-child(3) { animation-duration: 0.68s; animation-delay: 0.07s; }
+
+/* Sidebar nav */
+.sp-nav-heading {
+  padding: 0 9px 5px;
+  color: rgba(255,255,255,0.28);
+  font: 700 9px "JetBrains Mono","Cascadia Code",monospace;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  display: block;
+}
+.sp-nav-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 9px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: rgba(255,255,255,0.52);
+  cursor: pointer;
+  font-size: 12.5px;
+  font-weight: 500;
+  text-align: left;
+  transition: background 130ms ease, color 130ms ease;
+}
+.sp-nav-btn:hover {
+  background: rgba(255,255,255,0.07);
+  color: rgba(255,255,255,0.88);
+}
+.sp-nav-btn.active {
+  background: rgba(255,255,255,0.10);
+  color: rgba(255,255,255,0.96);
+}
+.sp-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+.sp-nav-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sp-sidebar-footer {
+  margin-top: auto;
+  padding: 8px 10px 2px;
+  font-size: 10px;
+  color: rgba(255,255,255,0.18);
+  font-family: "JetBrains Mono","Cascadia Code",monospace;
+  letter-spacing: 0.04em;
+}
+
+/* Main content column */
+.sp-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+
+/* Header card */
+.sp-header {
+  display: grid;
+  grid-template-columns: 44px minmax(0,1fr) auto;
+  align-items: start;
+  gap: 13px;
+  padding: 16px;
+  border-radius: 14px;
+  background:
+    radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--accent, #1ed760) 14%, transparent), transparent 44%),
+    rgba(255,255,255,0.032);
+  border: 1px solid rgba(255,255,255,0.075);
+  box-shadow: 0 14px 36px rgba(0,0,0,0.20);
+  flex-shrink: 0;
+}
+.sp-header-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.sp-header-icon img {
+  width: 28px;
+  height: 28px;
+  display: block;
+  object-fit: contain;
+}
+.sp-header-copy { min-width: 0; }
+.sp-eyebrow {
+  display: inline-flex;
+  margin-bottom: 6px;
+  padding: 2.5px 7px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent, #1ed760) 30%, transparent);
+  background: color-mix(in srgb, var(--accent, #1ed760) 10%, transparent);
+  color: color-mix(in srgb, var(--accent, #1ed760) 88%, white);
+  font: 700 8px "JetBrains Mono","Cascadia Code",monospace;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+.sp-title {
+  margin: 0 0 7px;
+  font-size: 20px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.96);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+.sp-desc {
+  margin: 0 0 6px;
+  font-size: 12px;
+  line-height: 1.56;
+  color: rgba(255,255,255,0.52);
+}
+.sp-subtitle {
+  font-size: 11px;
+  color: rgba(255,255,255,0.30);
+  letter-spacing: 0.02em;
+}
+.sp-open-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 11px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.70);
+  font-size: 11.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: background 130ms ease, color 130ms ease, border-color 130ms ease;
+  flex-shrink: 0;
+  align-self: center;
+}
+.sp-open-btn:hover {
+  background: rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.95);
+  border-color: rgba(255,255,255,0.18);
+}
+
+/* Embed container — fixed 352px matches Spotify embed default */
+.sp-embed {
+  flex-shrink: 0;
+  height: 352px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #181818;
+  border: 1px solid rgba(255,255,255,0.065);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.22);
+}
+.sp-embed iframe {
+  width: 100%;
+  height: 352px;
+  display: block;
+  border: 0;
+  background: #181818;
+}
+
+/* Footer */
+.sp-footer {
+  padding: 4px 2px 2px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.22);
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+}
+
+/* ── Coursework card hover elevation ──────────────── */
+.cw-card {
+  will-change: transform;
+}
+.cw-card:hover {
+  background: rgba(255,255,255,0.048);
+  border-color: rgba(255,255,255,0.13);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.16);
 }
 
 .spotify-desktop-logo {

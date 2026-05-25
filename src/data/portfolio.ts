@@ -132,12 +132,12 @@ export const projects: Project[] = [
 ];
 
 export const skills = {
-  Languages: ['TypeScript', 'JavaScript', 'Python', 'Java', 'SQL', 'HTML/CSS'],
-  Frontend: ['React', 'Vite', 'TailwindCSS', 'Framer Motion', 'D3.js'],
-  Backend: ['Node.js', 'REST APIs', 'Authentication', 'PostgreSQL', 'Express'],
-  'AI / ML': ['Model evaluation', 'Prompt engineering', 'Scikit-learn', 'Pandas', 'Research workflows'],
-  Data: ['Visualization', 'Dashboards', 'Simulation', 'ETL', 'Statistical reasoning'],
-  Tools: ['Git', 'GitHub', 'Figma', 'Notion', 'Vercel', 'Linear'],
+  Languages: ['TypeScript', 'JavaScript', 'Python', 'Java', 'SQL', 'HTML/CSS', 'C', 'C++', 'Bash', 'R', 'Swift', 'Scheme', 'Prisma Schema', 'LaTeX', 'Postgres'],
+  Frontend:  ['React', 'Vite', 'TailwindCSS', 'Framer Motion', 'D3.js', 'Next.js'],
+  Backend:   ['Node.js', 'REST APIs', 'Authentication', 'PostgreSQL', 'Express', 'Prisma'],
+  'AI / ML': ['Model evaluation', 'Prompt engineering', 'Scikit-learn', 'Pandas', 'Research workflows', 'Computer vision', 'CNNs', 'Data pipelines'],
+  Data:      ['Visualization', 'Dashboards', 'Simulation', 'ETL', 'Statistical reasoning', 'Data analysis', 'Forecast modeling'],
+  Tools:     ['Git', 'GitHub', 'Figma', 'Notion', 'Vercel', 'Linear', 'Docker', 'Postman'],
 };
 
 export const experiences: Experience[] = [
@@ -195,6 +195,8 @@ export type Course = {
   category: string;
   status: CourseStatus;
   description?: string;
+  tags?: string[];       /* hover-reveal topic chips */
+  external?: boolean;    /* drives "External Programs" visual treatment */
 };
 
 export type Certificate = {
@@ -206,25 +208,63 @@ export type Certificate = {
 };
 
 export const coursework: Course[] = [
-  /* ── UC Berkeley ──────────────────────────────────── */
+  /* ── Computer Science ─────────────────────────────── */
   {
     id: 'cs61a', code: 'CS 61A',
     name: 'Structure & Interpretation of Computer Programs',
-    institution: 'UC Berkeley', category: 'CS Core', status: 'Completed',
+    institution: 'UC Berkeley', category: 'Computer Science', status: 'Completed',
     description: 'Functional, procedural, and OOP paradigms; recursion, abstraction, interpreters',
   },
   {
     id: 'cs61b', code: 'CS 61B',
     name: 'Data Structures',
-    institution: 'UC Berkeley', category: 'CS Core', status: 'Completed',
+    institution: 'UC Berkeley', category: 'Computer Science', status: 'Completed',
     description: 'Algorithms, data structures, and object-oriented design in Java',
   },
   {
     id: 'cs61c', code: 'CS 61C',
     name: 'Machine Structures',
-    institution: 'UC Berkeley', category: 'CS Core', status: 'Completed',
+    institution: 'UC Berkeley', category: 'Computer Science', status: 'Completed',
     description: 'C programming, RISC-V assembly, computer organization and architecture',
   },
+  {
+    id: 'cs36', code: 'CS 36',
+    name: 'Technology, Society & the Future of Industry',
+    institution: 'UC Berkeley', category: 'Computer Science', status: 'Current',
+    description: 'Seminar exploring AI, automation, startups, technological shifts, and the future direction of the tech industry',
+  },
+  {
+    id: 'cs50', code: 'CS50',
+    name: 'Introduction to Computer Science',
+    institution: 'Harvard', category: 'Computer Science', status: 'Completed',
+    description: 'C, Python, SQL, HTML/CSS/JS — Harvard\'s foundational CS breadth course',
+  },
+  {
+    id: 'eneres172', code: 'ENERES 172',
+    name: 'Techno-Optimism & Ecomodernism',
+    institution: 'UC Berkeley', category: 'Computer Science', status: 'Current',
+    description: 'Technology, automation, energy systems, industrial development, and the future of civilization — examining techno-optimism and ecomodernist frameworks',
+  },
+  /* ── Systems & Low Level ─────────────────────────── */
+  {
+    id: 'cs447', code: 'CS 0447',
+    name: 'Computer Organization and Assembly Language',
+    institution: 'University of Pittsburgh', category: 'Systems', status: 'Completed',
+    description: 'Assembly, memory layout, CPU execution, low-level systems thinking, computer architecture fundamentals',
+  },
+  {
+    id: 'cs449', code: 'CS 0449',
+    name: 'Introduction to Systems Software',
+    institution: 'University of Pittsburgh', category: 'Systems', status: 'Completed',
+    description: 'C programming, debugging, linking/loading, Unix tooling, memory management, systems-level development',
+  },
+  {
+    id: 'cs1550', code: 'CS 1550',
+    name: 'Introduction to Operating Systems',
+    institution: 'University of Pittsburgh', category: 'Systems', status: 'Completed',
+    description: 'Processes, threads, synchronization, virtual memory, scheduling, file systems, concurrency',
+  },
+  /* ── Mathematics ──────────────────────────────────── */
   {
     id: 'math51', code: 'MATH 51',
     name: 'Linear Algebra & Differential Calculus',
@@ -243,18 +283,45 @@ export const coursework: Course[] = [
     institution: 'UC Berkeley', category: 'Mathematics', status: 'Current',
     description: 'Gradient, divergence, curl, Stokes\' and divergence theorems',
   },
+  /* ── Statistics ──────────────────────────────────── */
+  {
+    id: 'stat20', code: 'STAT 20',
+    name: 'Introduction to Probability and Statistics',
+    institution: 'UC Berkeley', category: 'Statistics', status: 'Completed',
+    description: 'Statistical reasoning, probability distributions, inference, data interpretation, uncertainty modeling',
+  },
+  /* ── Economics ────────────────────────────────────── */
   {
     id: 'econ1', code: 'ECON 1',
     name: 'Principles of Economics',
     institution: 'UC Berkeley', category: 'Economics', status: 'Completed',
     description: 'Micro and macroeconomic foundations, markets, fiscal and monetary policy',
   },
-  /* ── Harvard ──────────────────────────────────────── */
+
+  /* ── External Programs ───────────────────────────── */
   {
-    id: 'cs50', code: 'CS50',
-    name: 'Introduction to Computer Science',
-    institution: 'Harvard', category: 'CS Core', status: 'Completed',
-    description: 'C, Python, SQL, HTML/CSS/JS — Harvard\'s foundational CS breadth course',
+    id: 'cs231n', code: 'CS231n',
+    name: 'Convolutional Neural Networks for Visual Recognition',
+    institution: 'Stanford University', category: 'External Programs', status: 'Completed',
+    description: 'Deep learning for computer vision, CNN architectures, image recognition, object detection, segmentation, and neural network optimization.',
+    tags: ['AI', 'Computer Vision', 'Deep Learning'],
+    external: true,
+  },
+  {
+    id: 'cs50w', code: 'CS50W',
+    name: "CS50's Web Programming with Python and JavaScript",
+    institution: 'Harvard', category: 'External Programs', status: 'Completed',
+    description: 'Full-stack web development with Python, Flask, JavaScript, APIs, SQL, authentication, and frontend/backend integration.',
+    tags: ['Web Development', 'Full Stack', 'APIs'],
+    external: true,
+  },
+  {
+    id: 'cs50cy', code: 'CS50CY',
+    name: "CS50's Introduction to Cybersecurity",
+    institution: 'Harvard', category: 'External Programs', status: 'Completed',
+    description: 'Cybersecurity fundamentals, encryption, authentication, digital privacy, networking security, vulnerabilities, and secure systems design.',
+    tags: ['Security', 'Systems', 'Networking'],
+    external: true,
   },
 ];
 
