@@ -981,11 +981,11 @@ function ProjectDetail({ project: p, onBack }: { project: typeof projects[0]; on
 
 function ResearchSection() {
   const items = [
-    { title: 'AI-assisted Healthcare', sub: 'Early detection of neurological signals using structured clinical AI workflows.', tag: 'Active', color: '#16c60c' },
-    { title: 'Economic Simulation', sub: 'Policy modeling through interactive simulation — making tradeoffs legible.', tag: '2024–', color: '#f1bc31' },
-    { title: 'Civic Tech', sub: 'Public-interest software for underserved communities and government transparency.', tag: '2023–', color: '#0078d4' },
-    { title: 'CS Education & Access', sub: 'Lowering barriers to computing through curriculum design and tooling.', tag: 'Ongoing', color: '#a78bfa' },
-    { title: 'Distributed AI Inference', sub: 'Exploring architectures for efficient multi-agent AI at the edge.', tag: 'Exploring', color: '#fb923c' },
+    { title: 'Synthetic Persona Research · ICTi / Itaú', sub: 'Generating synthetic customer profiles to model financial behaviors — enabling safer, more representative AI testing without real user data.', tag: 'Active', color: '#fb923c' },
+    { title: 'Deep Learning for Glioma Detection · Oxford', sub: 'Designed an OCR-inspired CNN reaching 93% accuracy on 10,000+ CT/MRI scans. Deployed in 5 low-resource hospitals across Brazil.', tag: '2023–2024', color: '#0078d4' },
+    { title: 'Agricultural Systems Symposium · Columbia', sub: 'Presented applied agro research at Columbia University symposium, exploring technology-driven approaches to sustainable agricultural systems.', tag: '2022–2023', color: '#69b3e7' },
+    { title: 'Agricultural Research · Harvard', sub: 'Contributed to agro-focused research discussion at Harvard, examining data-driven models for crop optimization and rural economic development.', tag: '2022–2023', color: '#a31f34' },
+    { title: 'Heterogeneous Catalysis · UFMT', sub: 'Co-developed catalyst-based fertilizers from wood by-products, adopted by Amaggi. Tested 12 compositions; produced 2 patentable formulas stabilizing $8M+ in crop output.', tag: '2020–2023', color: '#16c60c' },
   ];
 
   return (

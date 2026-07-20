@@ -657,38 +657,39 @@ a { color: inherit; text-decoration: none; }
 
 .win-startmenu {
   position: absolute;
-  bottom: 62px;
+  bottom: 66px;
   left: 50%;
   transform: translateX(-50%);
-  width: 660px;
+  width: 680px;
   max-width: calc(100vw - 32px);
-  background: rgba(24,24,28,0.97);
-  border: 1px solid rgba(255,255,255,0.10);
-  border-radius: 12px;
+  background: rgba(18,18,22,0.96);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 16px;
   box-shadow:
-    0 32px 80px rgba(0,0,0,0.75),
-    0 0 0 0.5px rgba(255,255,255,0.04) inset;
-  backdrop-filter: blur(48px) saturate(160%);
-  -webkit-backdrop-filter: blur(48px) saturate(160%);
+    0 40px 100px rgba(0,0,0,0.80),
+    0 0 0 0.5px rgba(255,255,255,0.05) inset;
+  backdrop-filter: blur(60px) saturate(180%);
+  -webkit-backdrop-filter: blur(60px) saturate(180%);
   z-index: 490;
   overflow: hidden;
-  animation: startmenu-open 0.18s cubic-bezier(0.34,1.2,0.64,1) both;
+  /* NO CSS animation here — Framer Motion owns open/close */
 }
 
 .startmenu-search {
   display: flex;
   align-items: center;
-  gap: 9px;
-  margin: 20px 24px 16px;
-  padding: 7px 12px;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.10);
-  border-radius: 6px;
-  transition: border-color 150ms, background 150ms;
+  gap: 10px;
+  margin: 20px 20px 18px;
+  padding: 9px 14px;
+  background: rgba(255,255,255,0.055);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 10px;
+  transition: border-color 160ms, background 160ms, box-shadow 160ms;
 }
 .startmenu-search:focus-within {
-  border-color: var(--win-blue);
-  background: rgba(255,255,255,0.08);
+  border-color: rgba(0,120,212,0.70);
+  background: rgba(255,255,255,0.075);
+  box-shadow: 0 0 0 3px rgba(0,120,212,0.12);
 }
 .startmenu-search input {
   flex: 1;
@@ -696,50 +697,60 @@ a { color: inherit; text-decoration: none; }
   border: none;
   outline: none;
   font-family: "Segoe UI", system-ui, sans-serif;
-  font-size: 14px;
-  color: rgba(255,255,255,0.85);
+  font-size: 13.5px;
+  color: rgba(255,255,255,0.88);
 }
-.startmenu-search input::placeholder { color: rgba(255,255,255,0.35); }
+.startmenu-search input::placeholder { color: rgba(255,255,255,0.30); }
 
 .startmenu-section-title {
-  padding: 0 24px 8px;
-  font-size: 12px;
+  padding: 0 20px 7px;
+  font-size: 10.5px;
   font-weight: 600;
-  color: rgba(255,255,255,0.55);
-  letter-spacing: 0.02em;
+  color: rgba(255,255,255,0.35);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .startmenu-pinned {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  gap: 0;
-  padding: 0 18px;
+  gap: 2px;
+  padding: 0 14px 4px;
 }
 
 .startmenu-pin {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px;
-  padding: 10px 5px 9px;
-  border-radius: 6px;
+  gap: 6px;
+  padding: 10px 4px 10px;
+  border-radius: 10px;
   cursor: pointer;
-  transition: background 100ms ease;
+  border: 0;
+  background: transparent;
+  transition: background 120ms ease, transform 120ms ease;
 }
-.startmenu-pin:hover { background: rgba(255,255,255,0.08); }
-.startmenu-pin:active { background: rgba(255,255,255,0.12); }
+.startmenu-pin:hover {
+  background: rgba(255,255,255,0.07);
+  transform: translateY(-1px);
+}
+.startmenu-pin:active {
+  background: rgba(255,255,255,0.11);
+  transform: translateY(0);
+}
 
 .startmenu-pin-icon {
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
   display: grid;
   place-items: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.28);
 }
 
 .startmenu-spotify-logo {
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   display: block;
   object-fit: contain;
 }
@@ -747,48 +758,52 @@ a { color: inherit; text-decoration: none; }
 .startmenu-pin-label {
   font-size: 11px;
   font-weight: 400;
-  color: rgba(255,255,255,0.82);
+  color: rgba(255,255,255,0.72);
   text-align: center;
-  line-height: 1.25;
+  line-height: 1.3;
 }
 
 .startmenu-recommended {
-  padding: 6px 16px 20px;
+  padding: 4px 14px 18px;
+  display: grid;
+  gap: 2px;
 }
 
 .startmenu-rec-item {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 9px 10px;
-  border-radius: 6px;
+  padding: 8px 8px;
+  border-radius: 8px;
   cursor: pointer;
   width: 100%;
   border: 0;
   text-align: left;
   background: transparent;
-  transition: background 100ms ease;
+  transition: background 110ms ease;
 }
-.startmenu-rec-item:hover { background: rgba(255,255,255,0.07); }
+.startmenu-rec-item:hover { background: rgba(255,255,255,0.065); }
 
 .startmenu-rec-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
   display: grid;
   place-items: center;
   flex-shrink: 0;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.22);
 }
 .startmenu-rec-icon.social {
   background: rgba(255,255,255,0.06);
   border: 1px solid rgba(255,255,255,0.08);
   color: rgba(255,255,255,0.76);
+  box-shadow: none;
 }
 
 .startmenu-divider {
   height: 1px;
-  background: rgba(255,255,255,0.07);
-  margin: 12px 24px;
+  background: rgba(255,255,255,0.06);
+  margin: 10px 20px;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -2152,6 +2167,27 @@ a { color: inherit; text-decoration: none; }
   letter-spacing: 0.04em;
 }
 
+/* Section intro */
+.sp-intro {
+  flex-shrink: 0;
+  padding: 2px 2px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.055);
+  margin-bottom: 4px;
+}
+.sp-intro-title {
+  margin: 0 0 6px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.82);
+  letter-spacing: -0.01em;
+}
+.sp-intro-body {
+  margin: 0;
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: rgba(255,255,255,0.38);
+}
+
 /* Main content column */
 .sp-content {
   display: flex;
@@ -2360,6 +2396,135 @@ a { color: inherit; text-decoration: none; }
 .fake-status {
   margin-top: 14px;
   color: rgba(125,211,252,0.82);
+}
+
+/* ── Recycle Bin redesign ─────────────────────────── */
+.rb-app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 20px 20px 0;
+  background:
+    radial-gradient(circle at 90% 0%, rgba(251,146,60,0.07), transparent 36%),
+    #111113;
+  color: rgba(255,255,255,0.82);
+  overflow: hidden;
+}
+.rb-header {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin-bottom: 20px;
+  flex-shrink: 0;
+}
+.rb-header-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  display: grid;
+  place-items: center;
+  color: rgba(255,255,255,0.45);
+  flex-shrink: 0;
+}
+.rb-title {
+  margin: 0 0 3px;
+  font-size: 18px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+.rb-meta {
+  margin: 0;
+  font-size: 11.5px;
+  color: rgba(255,255,255,0.30);
+}
+.rb-col-head {
+  display: grid;
+  grid-template-columns: 20px minmax(0,1fr) 110px 130px 52px 28px;
+  gap: 10px;
+  align-items: center;
+  padding: 0 12px 7px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  font-size: 10.5px;
+  color: rgba(255,255,255,0.25);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+.rb-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 6px 0;
+}
+.rb-row {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 20px minmax(0,1fr) 110px 130px 52px 28px;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: rgba(255,255,255,0.72);
+  cursor: default;
+  text-align: left;
+  transition: background 130ms ease;
+}
+.rb-row:hover {
+  background: rgba(255,255,255,0.045);
+}
+.rb-row--restoring {
+  background: rgba(255,255,255,0.07);
+  opacity: 0.5;
+}
+.rb-file-icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+.rb-file-name {
+  font-size: 12.5px;
+  font-weight: 450;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.rb-file-type,
+.rb-file-deleted,
+.rb-file-size {
+  font-size: 11.5px;
+  color: rgba(255,255,255,0.32);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rb-restore-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,0.18);
+  transition: color 130ms ease;
+}
+.rb-row:hover .rb-restore-btn {
+  color: rgba(255,255,255,0.55);
+}
+.rb-footer {
+  flex-shrink: 0;
+  padding: 10px 12px 16px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+.rb-status {
+  font-size: 11.5px;
+  color: rgba(255,255,255,0.28);
+  line-height: 1.5;
+}
+.rb-status--active {
+  color: rgba(125,211,252,0.80);
 }
 
 .sim-app {

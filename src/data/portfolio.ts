@@ -142,44 +142,44 @@ export const skills = {
 
 export const experiences: Experience[] = [
   {
-    title: 'Product Strategy',
+    title: 'Finance & Banking Operations',
+    organization: 'Itaú Unibanco',
+    period: '2026–present',
+    description:
+      'Working within the finance division on banking operations, financial analysis, and process optimization — building fluency in how large-scale financial institutions make data-driven decisions.',
+    tags: ['Finance', 'Banking', 'Operations', 'Analysis'],
+  },
+  {
+    title: 'AI Research — Synthetic Personas',
+    organization: 'ICTi · Itaú Science & Technology Institute',
+    period: '2026–present',
+    description:
+      'Researching synthetic persona generation as a method for modeling diverse customer profiles and financial behaviors — enabling safer, more representative testing of AI systems without relying on real user data.',
+    tags: ['AI Research', 'Synthetic Data', 'NLP', 'Fintech'],
+  },
+  {
+    title: 'Product Design & Strategy Intern',
     organization: 'Uber',
-    period: '2024',
+    period: 'Jul–Oct 2024',
     description:
-      'Explored marketplace dynamics, growth strategy, and product decision frameworks with an emphasis on user behavior, operational constraints, and measurable outcomes.',
-    tags: ['Product', 'Strategy', 'Marketplace', 'Growth'],
+      'Led 8+ UX research sessions for the UberTeens Canada launch. Delivered product and interface proposals that reduced onboarding friction by 15% and shaped cross-functional decisions across the pilot rollout.',
+    tags: ['Product', 'UX Research', 'Strategy', 'Growth'],
   },
   {
-    title: 'AI Research Lead',
-    organization: 'NeuroDetectAI',
-    period: '2024–2025',
+    title: 'Deep Learning Research',
+    organization: 'University of Oxford',
+    period: '2023–2024',
     description:
-      'Directing research framing, model architecture decisions, and evaluation methodology for AI-assisted neurological detection workflows. Focused on responsible deployment and clinical utility.',
-    tags: ['AI', 'Healthcare', 'Research', 'ML'],
+      'Designed an OCR-inspired deep learning model for glioma detection, reaching 93% accuracy across 10,000+ CT/MRI scans. Work contributed to diagnostic efforts in 5 low-resource hospitals across Brazil.',
+    tags: ['AI', 'Computer Vision', 'Healthcare', 'Research'],
   },
   {
-    title: 'Founder',
-    organization: 'Salvar o Amanhã',
-    period: '2023–present',
+    title: 'Policy Fellow',
+    organization: 'Mato Grosso Legislative Assembly',
+    period: '2021–present',
     description:
-      'Built a social-impact initiative around climate education, youth engagement, and accessible public-interest communication. Grew community engagement through storytelling-first design.',
-    tags: ['Education', 'Climate', 'Impact', 'Community'],
-  },
-  {
-    title: 'Product Designer',
-    organization: 'OpTech',
-    period: '2024',
-    description:
-      'Designed early product concepts for operational coordination and decision-support systems — focused on reducing complexity for program managers navigating fragmented toolchains.',
-    tags: ['Product', 'UX', 'Systems design', 'Operations'],
-  },
-  {
-    title: 'CS Research & Coursework',
-    organization: 'UC Berkeley',
-    period: '2023–present',
-    description:
-      'Coursework spanning data structures, algorithms, AI/ML, and systems programming. Independent research bridging software, policy, and education access.',
-    tags: ['CS', 'Research', 'Policy', 'Education'],
+      'Co-designed a 4-year Education and Public Health Policy Plan that generated R$17M+ in public investment. Co-authored 8 bills approved across 38 municipalities, directly impacting 24,000 public school students.',
+    tags: ['Policy', 'Education', 'Public Impact', 'Government'],
   },
 ];
 

@@ -276,8 +276,12 @@ export function Terminal({ onOpenApp }: Props) {
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') { run(input); setInput(''); }
-    else if (e.key === 'ArrowUp') {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      run(input);
+      setInput('');
+      setTimeout(() => inputRef.current?.focus(), 0);
+    } else if (e.key === 'ArrowUp') {
       e.preventDefault();
       const idx = Math.min(cmdIdx + 1, cmdHist.length - 1);
       setCmdIdx(idx); setInput(cmdHist[idx] ?? '');

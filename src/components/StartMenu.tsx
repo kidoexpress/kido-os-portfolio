@@ -91,20 +91,20 @@ export function StartMenu({ open, onClose, onOpenApp }: Props) {
 
           <motion.div
             className="win-startmenu"
-            initial={{ opacity: 0, y: 16, scale: 0.97 }}
+            initial={{ opacity: 0, y: 14, scale: 0.976 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 12, scale: 0.97 }}
-            transition={{ duration: 0.16, ease: [0.34, 1.1, 0.64, 1] }}
+            exit={{ opacity: 0, y: 8, scale: 0.984, transition: { duration: 0.12, ease: [0.4, 0, 1, 1] } }}
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Search */}
-            <div className="startmenu-search" style={{ margin: '20px 24px 16px' }}>
-              <Search size={15} style={{ color: 'rgba(255,255,255,0.35)', flexShrink: 0 }} />
+            <div className="startmenu-search">
+              <Search size={14} style={{ color: 'rgba(255,255,255,0.32)', flexShrink: 0 }} />
               <input
                 ref={inputRef}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search for apps, files, settings"
+                placeholder="Search apps, files, settings"
               />
             </div>
 
@@ -197,17 +197,27 @@ export function StartMenu({ open, onClose, onOpenApp }: Props) {
             {/* Footer */}
             <div style={{
               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-              padding: '10px 24px 14px', borderTop: '1px solid rgba(255,255,255,0.06)',
+              padding: '10px 20px 14px', borderTop: '1px solid rgba(255,255,255,0.06)',
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <div style={{
-                  width: 28, height: 28, borderRadius: '50%',
-                  background: 'rgba(255,255,255,0.12)', display: 'grid', placeItems: 'center',
-                  fontSize: 12, fontWeight: 500, color: 'white',
+                  width: 30, height: 30, borderRadius: '50%',
+                  background: 'linear-gradient(135deg, #0078d4, #005a9e)',
+                  display: 'grid', placeItems: 'center',
+                  fontSize: 11.5, fontWeight: 600, color: 'white',
+                  flexShrink: 0,
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.30)',
                 }}>JK</div>
-                <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.65)' }}>João Kido</span>
+                <div>
+                  <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.80)', fontWeight: 500, lineHeight: 1.2 }}>João Kido</div>
+                  <div style={{ fontSize: 10.5, color: 'rgba(255,255,255,0.30)', marginTop: 1 }}>UC Berkeley · CS</div>
+                </div>
               </div>
-              <button className="win-btn" style={{ fontSize: 12 }}>
+              <button
+                className="win-btn"
+                style={{ fontSize: 12, padding: '5px 12px', borderRadius: 7 }}
+                onClick={() => { onOpenApp('explorer'); onClose(); }}
+              >
                 <FolderOpen size={13} />
                 Explorer
               </button>

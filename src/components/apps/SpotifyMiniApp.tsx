@@ -16,33 +16,33 @@ const playlists: Record<PlaylistId, {
 }> = {
   coding: {
     id: 'coding',
-    label: 'Coding',
-    title: 'Coding Playlist',
-    subtitle: 'study · coding · late-night work',
+    label: 'Building',
+    title: 'Coding',
+    subtitle: 'commits · debugging · side projects',
     description:
-      'Songs I usually listen to while studying, building, debugging, or pretending I will only fix one last thing.',
+      'The soundtrack to most of my commits: building, breaking, fixing, and occasionally rewriting something that worked an hour ago.',
     link: 'https://open.spotify.com/playlist/05JM7fctnFgFRFcHnJ3qqu?si=K7Kfo7zIQw6uiB41VoYvLg',
     embed: 'https://open.spotify.com/embed/playlist/05JM7fctnFgFRFcHnJ3qqu?utm_source=generator&theme=0',
     accent: '#1ed760',
   },
   focus: {
     id: 'focus',
-    label: 'Focus',
-    title: 'Focus Playlist',
-    subtitle: 'deep work · studying · concentration',
+    label: 'Deep Work',
+    title: 'Focus',
+    subtitle: 'deep work · reading · problem-solving',
     description:
-      'Cleaner tracks for long study blocks, reading dense papers, and staying locked into one problem at a time.',
+      'Music for the hours when I close the extra tabs, ignore my phone, and give one problem my full attention.',
     link: 'https://open.spotify.com/playlist/1eQNhMLiTAgevr5BtkxU7A?si=IhvgtlYfRceVAOxTQkE0Tw',
     embed: 'https://open.spotify.com/embed/playlist/1eQNhMLiTAgevr5BtkxU7A?utm_source=generator&theme=0',
     accent: '#60a5fa',
   },
   chilling: {
     id: 'chilling',
-    label: 'Chilling',
+    label: 'Slow Hours',
     title: 'Chilling',
-    subtitle: 'ambient · reflective · slow thinking',
+    subtitle: 'slow hours · reset · background',
     description:
-      'Dim-light music for slow thinking, reflective builds, and the calm part of the internet after midnight.',
+      'What I put on when I am still at the desk, but no longer trying to make the computer do anything.',
     link: 'https://open.spotify.com/playlist/1WyXF5RQJZT5aqW3qfk4eH?si=rtFtZICjQuC9ujT_KmKvhw',
     embed: 'https://open.spotify.com/embed/playlist/1WyXF5RQJZT5aqW3qfk4eH?utm_source=generator&theme=0',
     accent: '#c084fc',
@@ -51,9 +51,9 @@ const playlists: Record<PlaylistId, {
     id: 'lateNights',
     label: 'Late Nights',
     title: 'Late Nights',
-    subtitle: 'midnight · focused · atmospheric',
+    subtitle: 'after hours · night sessions · slow coding',
     description:
-      'Built for the 1am sessions. When the world is quiet and the code starts making sense.',
+      'For the last stretch of the day, when the messages stop, the tabs get fewer, and I can work with a little more patience than usual.',
     link: 'https://open.spotify.com/playlist/59Eaz8DrWYD5GYUfVUpZn2?si=rAX-z-iMSjuN0-97pNf8ew',
     embed: 'https://open.spotify.com/embed/playlist/59Eaz8DrWYD5GYUfVUpZn2?utm_source=generator&theme=0',
     accent: '#fb923c',
@@ -115,6 +115,12 @@ export function SpotifyMiniApp() {
 
         {/* ── Main ─────────────────────────────────── */}
         <main className="spotify-main">
+          {/* Section intro */}
+          <div className="sp-intro">
+            <p className="sp-intro-title">Playlists I actually work to</p>
+            <p className="sp-intro-body">These are the playlists that usually sit behind my work. Not curated for productivity, just the music I actually play while building, reading, debugging, and staying up later than planned.</p>
+          </div>
+
           <AnimatePresence mode="wait">
             <motion.section
               key={active.id}
@@ -158,7 +164,7 @@ export function SpotifyMiniApp() {
 
               {/* Footer tags */}
               <footer className="sp-footer">
-                <span>coding · focus · late-night work · caffeine · systems</span>
+                <span>{active.subtitle}</span>
               </footer>
             </motion.section>
           </AnimatePresence>
